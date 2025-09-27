@@ -122,3 +122,4 @@ server/hackGt25/
 
 server/.env/
 server/credentials.json
+server/__pycache__/

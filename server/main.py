@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from gmail import get_gmail_emails
+import groupme
 
 app = FastAPI()
 
@@ -42,3 +43,16 @@ def get_emails(
         return {"emails": emails}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/groups")
+def groups():
+    return groupme.get_groups()
+
+@app.get("/groups/{group_id}/messages")
+def messages(group_id: str, limit: int = 10):
+    return groupme.get_all_groups_messages(group_id, limit)
+
+if __name__ == "__main__":
+    # Example: fetch groups  when you run "python main.py"
+    groups = groupme.get_groups()
+    unread_messages = groupme.get_all_groups_messages(limit=5)
