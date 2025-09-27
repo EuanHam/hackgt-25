@@ -44,21 +44,46 @@ def get_emails(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+# GroupMe endpoints
 @app.get("/groups")
-def groups():
-    return groupme.get_groups()
-
+def get_all_groups():
+    """Get all GroupMe groups"""
+    try:
+        return groupme.get_groups()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 @app.get("/groups/messages")
-def messages(group_id: str, limit: int = 10):
-    return groupme.get_all_groups_messages(group_id, limit)
+def get_messages_for_all_groups(limit: int):
+    """Get messages for all groups"""
+    try:
+        return groupme.get_all_groups_messages(limit=5)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/groups/{group_id}/messages")
-def group_messages(group_id: str, limit: int = 10):
-    return groupme.get_messages_for_group(group_id, limit)
+def get_messages_for_specific_group(group_id: str, limit: int):
+    """Get messages for a specific group"""
+    try:
+        return groupme.get_messages_for_group(group_id, limit)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-# for testing purposes
+@app.get("/groups/{group_id}/info")
+def get_group_info(group_id: str):
+    """Get information about a specific group"""
+    try:
+        return groupme.get_group_info(group_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# # for testing purposes
 # if __name__ == "__main__":
 #     # Example: fetch groups  when you run "python main.py"
 #     groups = groupme.get_groups()
 #     print(groups)
-#     # unread_messages = groupme.get_all_groups_messages(limit=5)
+#     specific_messages = groupme.get_messages_for_group(groups[0]["id"], limit=5)
+#     print(specific_messages)
+#     group_name = groupme.get_group_name(groups[0]["id"])
+#     print(f"Group name: {group_name}")
