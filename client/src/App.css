@@ -193,6 +193,15 @@ body {
   font-size: 1.1rem;
 }
 
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
   .main-content {
