@@ -1,6 +1,6 @@
 export interface BaseFeedItem {
   id: string;
-  type: 'email' | 'post';
+  type: 'email' | 'post' | 'group';
   timestamp: string;
 }
 
@@ -19,7 +19,13 @@ export interface PostFeedItem extends BaseFeedItem {
   description: string;
 }
 
-export type FeedItem = EmailFeedItem | PostFeedItem;
+export interface GroupFeedItem extends BaseFeedItem {
+  type: 'group';
+  groupName: string;
+  unreadCount: number;
+}
+
+export type FeedItem = EmailFeedItem | PostFeedItem | GroupFeedItem;
 
 export interface FeedData {
   feedItems: FeedItem[];

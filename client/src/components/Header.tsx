@@ -1,7 +1,11 @@
 import React from 'react';
 import './Header.css';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onHamburgerClick: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onHamburgerClick }) => {
   return (
     <header className="header">
       <div className="header-content">
@@ -22,7 +26,11 @@ const Header: React.FC = () => {
         {/* Right side elements */}
         <div className="header-right">
           {/* Hamburger menu */}
-          <button className="hamburger-menu" aria-label="Menu">
+          <button 
+            className="hamburger-menu" 
+            aria-label="Menu"
+            onClick={onHamburgerClick}
+          >
             <div className="hamburger-line"></div>
             <div className="hamburger-line"></div>
             <div className="hamburger-line"></div>

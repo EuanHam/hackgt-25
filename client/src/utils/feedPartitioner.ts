@@ -3,8 +3,6 @@ import type { FeedItem } from '../types/feedTypes';
 interface Column {
   items: FeedItem[];
   totalHeight: number;
-  emailCount: number;
-  postCount: number;
 }
 
 interface PartitionResult {
@@ -16,7 +14,8 @@ interface PartitionResult {
 // Estimated heights for different item types (in pixels)
 const ITEM_HEIGHTS = {
   email: 120, // Estimated height for email items
-  post: 200, // Estimated height for post items
+  post: 200,  // Estimated height for post items
+  group: 100, // Estimated height for group items
 };
 
 /**
@@ -31,12 +30,10 @@ function getItemHeight(item: FeedItem): number {
  * Lower score means better balance
  */
 function calculateBalanceScore(column1: Column, column2: Column): number {
-  const heightDiff = Math.abs(column1.totalHeight - column2.totalHeight);
-  const typeDiff = Math.abs(column1.emailCount - column2.emailCount) + 
-                   Math.abs(column1.postCount - column2.postCount);
-  
-  // Weight height difference more heavily than type difference
-  return heightDiff * 2 + typeDiff;
+  // Prefer left column to be taller or equal to right column
+  const heightDiff = column1.totalHeight - column2.totalHeight;
+  // If left is taller, no penalty. If right is taller, add a large penalty
+  return heightDiff >= 0 ? heightDiff : 1000 - heightDiff;
 }
 
 /**
@@ -45,9 +42,7 @@ function calculateBalanceScore(column1: Column, column2: Column): number {
 function addItemToColumn(column: Column, item: FeedItem): Column {
   return {
     items: [...column.items, item],
-    totalHeight: column.totalHeight + getItemHeight(item),
-    emailCount: column.emailCount + (item.type === 'email' ? 1 : 0),
-    postCount: column.postCount + (item.type === 'post' ? 1 : 0),
+    totalHeight: column.totalHeight + getItemHeight(item)
   };
 }
 
@@ -55,18 +50,79 @@ function addItemToColumn(column: Column, item: FeedItem): Column {
  * Parses a date string in "Month Day, Year" format to a Date object
  */
 function parseDate(dateString: string): Date {
-  return new Date(dateString);
+  try {
+    // Handle the specific format "Month Day, Year"
+    const parts = dateString.trim().split(/[\s,]+/);
+    if (parts.length >= 3) {
+      const monthName = parts[0];
+      const day = parseInt(parts[1], 10);
+      const year = parseInt(parts[2], 10);
+      
+      // More reliable month parsing
+      const monthMap: Record<string, number> = {
+        'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+        'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11
+      };
+      
+      const month = monthMap[monthName.toLowerCase()];
+      if (month !== undefined) {
+        const date = new Date(year, month, day);
+        // Validate the date
+        if (date.getFullYear() === year && date.getMonth() === month && date.getDate() === day) {
+          return date;
+        }
+      }
+    }
+    
+    // Fallback to default Date parsing
+    const fallbackDate = new Date(dateString);
+    if (!isNaN(fallbackDate.getTime())) {
+      return fallbackDate;
+    }
+    
+    console.warn(`Invalid date format: ${dateString}`);
+    return new Date(0); // Return epoch for invalid dates
+  } catch (e) {
+    console.error(`Error parsing date: ${dateString}`, e);
+    return new Date(0); // Return epoch for invalid dates
+  }
 }
 
 /**
  * Sorts feed items by recency (most recent first)
+ * Prioritizes current year (2024) over future years (2025+)
  */
 function sortByRecency(feedItems: FeedItem[]): FeedItem[] {
-  return [...feedItems].sort((a, b) => {
-    const dateA = parseDate(a.timestamp);
-    const dateB = parseDate(b.timestamp);
-    return dateB.getTime() - dateA.getTime(); // Most recent first
+  const currentYear = new Date().getFullYear();
+  
+  const itemsWithDates = feedItems.map(item => {
+    const date = parseDate(item.timestamp);
+    return {
+      item,
+      date,
+      // Future years (beyond current year) should be treated as earlier than current year
+      sortKey: date.getFullYear() > currentYear 
+        ? new Date(currentYear, 11, 31, 23, 59, 59).getTime() - (date.getFullYear() - currentYear) * 1000000000
+        : date.getTime()
+    };
   });
+
+  // Log the original and parsed dates for debugging
+  console.log('=== Original Order ===');
+  itemsWithDates.forEach(({ item, date, sortKey }) => {
+    console.log(`[${item.type}] ${item.timestamp} -> ${date.toString()}, sortKey: ${new Date(sortKey).toString()}`);
+  });
+
+  // Sort by our custom sort key
+  const sorted = [...itemsWithDates].sort((a, b) => b.sortKey - a.sortKey);
+
+  // Log the sorted order for debugging
+  console.log('\n=== Sorted Order ===');
+  sorted.forEach(({ item, date, sortKey }) => {
+    console.log(`[${item.type}] ${item.timestamp} -> ${date.toString()}, sortKey: ${new Date(sortKey).toString()}`);
+  });
+
+  return sorted.map(({ item }) => item);
 }
 
 /**
@@ -78,17 +134,11 @@ export function partitionFeedItems(feedItems: FeedItem[]): PartitionResult {
     return { column1: [], column2: [], balanceScore: 0 };
   }
 
-  // Sort items by recency first, then by type for better distribution
-  const sortedItems = sortByRecency(feedItems).sort((a, b) => {
-    // Within the same date, alternate between types for better distribution
-    if (a.type !== b.type) {
-      return a.type === 'email' ? -1 : 1;
-    }
-    return 0;
-  });
+  // Sort items by recency (most recent first)
+  const sortedItems = sortByRecency(feedItems);
 
-  let column1: Column = { items: [], totalHeight: 0, emailCount: 0, postCount: 0 };
-  let column2: Column = { items: [], totalHeight: 0, emailCount: 0, postCount: 0 };
+  let column1: Column = { items: [], totalHeight: 0 };
+  let column2: Column = { items: [], totalHeight: 0 };
 
   for (const item of sortedItems) {
     // Calculate what the balance would be if we add to each column
@@ -116,59 +166,39 @@ export function partitionFeedItems(feedItems: FeedItem[]): PartitionResult {
 }
 
 /**
- * Alternative partitioning algorithm that prioritizes type balance
- * Also considers recency within each type
+ * Simple partitioning algorithm that only considers date and column height
  */
 export function partitionFeedItemsByType(feedItems: FeedItem[]): PartitionResult {
   if (feedItems.length === 0) {
     return { column1: [], column2: [], balanceScore: 0 };
   }
 
-  // Sort by recency first, then separate items by type
+  // Sort by recency (most recent first)
   const sortedItems = sortByRecency(feedItems);
-  const emails = sortedItems.filter(item => item.type === 'email');
-  const posts = sortedItems.filter(item => item.type === 'post');
-
+  
   const column1: FeedItem[] = [];
   const column2: FeedItem[] = [];
+  let height1 = 0;
+  let height2 = 0;
 
-  // Distribute emails alternately
-  emails.forEach((email, index) => {
-    if (index % 2 === 0) {
-      column1.push(email);
+  // Distribute items, ensuring left column is always taller or equal to right column
+  for (const item of sortedItems) {
+    const itemHeight = getItemHeight(item);
+    
+    // Always add to left column unless it would make right column taller
+    if (height1 + itemHeight >= height2) {
+      column1.push(item);
+      height1 += itemHeight;
     } else {
-      column2.push(email);
+      column2.push(item);
+      height2 += itemHeight;
     }
-  });
-
-  // Distribute posts alternately
-  posts.forEach((post, index) => {
-    if (index % 2 === 0) {
-      column1.push(post);
-    } else {
-      column2.push(post);
-    }
-  });
-
-  // Calculate balance score
-  const column1Stats = {
-    emailCount: column1.filter(item => item.type === 'email').length,
-    postCount: column1.filter(item => item.type === 'post').length,
-    totalHeight: column1.reduce((sum, item) => sum + getItemHeight(item), 0),
-  };
-  
-  const column2Stats = {
-    emailCount: column2.filter(item => item.type === 'email').length,
-    postCount: column2.filter(item => item.type === 'post').length,
-    totalHeight: column2.reduce((sum, item) => sum + getItemHeight(item), 0),
-  };
-
-  const balanceScore = calculateBalanceScore(column1Stats, column2Stats);
+  }
 
   return {
     column1,
     column2,
-    balanceScore,
+    balanceScore: Math.abs(height1 - height2)
   };
 }
 
@@ -186,35 +216,27 @@ export function partitionFeedItemsByRecency(feedItems: FeedItem[]): PartitionRes
   
   const column1: FeedItem[] = [];
   const column2: FeedItem[] = [];
+  let height1 = 0;
+  let height2 = 0;
 
-  // Place items alternately, but prioritize recent items in column 1
-  sortedItems.forEach((item, index) => {
-    if (index % 2 === 0) {
+  // Distribute items, ensuring left column is always taller or equal to right column
+  for (const item of sortedItems) {
+    const itemHeight = getItemHeight(item);
+    
+    // Always add to left column unless it would make right column taller
+    if (height1 + itemHeight >= height2) {
       column1.push(item);
+      height1 += itemHeight;
     } else {
       column2.push(item);
+      height2 += itemHeight;
     }
-  });
-
-  // Calculate balance score
-  const column1Stats = {
-    emailCount: column1.filter(item => item.type === 'email').length,
-    postCount: column1.filter(item => item.type === 'post').length,
-    totalHeight: column1.reduce((sum, item) => sum + getItemHeight(item), 0),
-  };
-  
-  const column2Stats = {
-    emailCount: column2.filter(item => item.type === 'email').length,
-    postCount: column2.filter(item => item.type === 'post').length,
-    totalHeight: column2.reduce((sum, item) => sum + getItemHeight(item), 0),
-  };
-
-  const balanceScore = calculateBalanceScore(column1Stats, column2Stats);
+  }
 
   return {
     column1,
     column2,
-    balanceScore,
+    balanceScore: Math.abs(height1 - height2)
   };
 }
 

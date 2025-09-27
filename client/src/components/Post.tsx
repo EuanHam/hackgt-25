@@ -6,14 +6,23 @@ interface PostProps {
   posterName: string;
   description: string;
   timestamp?: string;
+  onImageClick?: (imageUrl: string, alt: string) => void;
 }
 
 const Post: React.FC<PostProps> = ({ 
   imageUrl, 
   posterName, 
   description, 
-  timestamp 
+  timestamp,
+  onImageClick 
 }) => {
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onImageClick) {
+      onImageClick(imageUrl, description);
+    }
+  };
+
   return (
     <div className="post">
       <div className="post-image-container">
@@ -21,6 +30,7 @@ const Post: React.FC<PostProps> = ({
           src={imageUrl} 
           alt={description}
           className="post-image"
+          onClick={handleImageClick}
         />
       </div>
       <div className="post-content">

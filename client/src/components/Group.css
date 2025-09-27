@@ -1,0 +1,105 @@
+.group {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  padding: 1rem;
+  align-items: center;
+}
+
+.group:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.group-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #4285f4;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.group-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+.group-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 0.5rem;
+}
+
+.group-timestamp {
+  font-size: 0.8rem;
+  color: #666;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+}
+
+.group-unread {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.unread-badge {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.no-messages {
+  color: #9aa0a6;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .group {
+    padding: 0.75rem;
+  }
+  
+  .group-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+  
+  .group-name {
+    font-size: 0.95rem;
+  }
+  
+  .unread-badge,
+  .no-messages {
+    font-size: 0.75rem;
+  }
+}
