@@ -1,58 +1,70 @@
-import os.path
-import base64
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from google.oauth2.credentials import Credentials
+import base64
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 def get_email_body(payload):
-    # Extracts the email body from the message payload.
+    """Extract plain text email body from Gmail message payload without cleaning."""
     if 'parts' in payload:
         for part in payload['parts']:
             if part['mimeType'] == 'text/plain':
-                data = part['body']['data']
-                return base64.urlsafe_b64decode(data).decode('utf-8')
+                data = part['body'].get('data')
+                if data:
+                    decoded = base64.urlsafe_b64decode(data).decode('utf-8')
+                    return decoded  # raw body
     elif payload.get('body', {}).get('data'):
         data = payload['body']['data']
-        return base64.urlsafe_b64decode(data).decode('utf-8')
+        decoded = base64.urlsafe_b64decode(data).decode('utf-8')
+        return decoded  # raw body
     return "(No body found)"
 
-def main():
-    creds = None
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open("token.json", "w") as token:
-            token.write(creds.to_json())
-
+def get_gmail_emails(access_token: str, max_results: int = 10, start_date: str = None, end_date: str = None):
+    """
+    Fetch Gmail emails in a given date range (if provided).
+    Dates should be strings in 'YYYY-MM-DD' format.
+    """
     try:
+        creds = Credentials(token=access_token, scopes=SCOPES)
         service = build("gmail", "v1", credentials=creds)
-        results = service.users().messages().list(userId="me", maxResults=4).execute()
+
+        # Build Gmail search query
+        query = ""
+        if start_date:
+            start_timestamp = int(datetime.strptime(start_date, "%Y-%m-%d").timestamp())
+            query += f" after:{start_timestamp}"
+        if end_date:
+            end_timestamp = int(datetime.strptime(end_date, "%Y-%m-%d").timestamp())
+            query += f" before:{end_timestamp}"
+
+        results = service.users().messages().list(
+            userId="me",
+            maxResults=max_results,
+            q=query.strip()
+        ).execute()
+
         messages = results.get("messages", [])
+        emails = []
 
-        if not messages:
-            print("No messages found.")
-            return
-
-        print("10 most recent emails:\n")
         for msg in messages:
             msg_detail = service.users().messages().get(userId="me", id=msg["id"]).execute()
             headers = msg_detail.get("payload", {}).get("headers", [])
+
             subject = next((h["value"] for h in headers if h["name"] == "Subject"), "(No Subject)")
             sender = next((h["value"] for h in headers if h["name"] == "From"), "(Unknown Sender)")
+            date_sent = next((h["value"] for h in headers if h["name"] == "Date"), "(Unknown Date)")
             body = get_email_body(msg_detail.get("payload", {}))
-            print(f"From: {sender}\nSubject: {subject}\nBody:\n{body}\n{'-'*50}")
+
+            emails.append({
+                "from": sender,
+                "subject": subject,
+                "date": date_sent,
+                "body": body
+            })
+
+        return emails
 
     except HttpError as error:
-        print(f"An error occurred: {error}")
-
-if __name__ == "__main__":
-    main()
+        raise Exception(f"Gmail API error: {error}")
