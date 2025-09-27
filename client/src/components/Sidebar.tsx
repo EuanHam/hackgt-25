@@ -4,9 +4,10 @@ import './Sidebar.css';
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  headerHeight: number;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
   return (
     <>
       {/* Backdrop */}
@@ -24,66 +25,81 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
         
         <div className="sidebar-content">
+          {/* GroupMe accounts */}
+          <h4>GroupMe accounts</h4>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <input type="text" placeholder="e.g. universitylife" className="filter-input" />
+            <button className="add-btn">+</button>
+          </div>
+          <div>
+            <span className="chip">@universitylife</span>
+            <span className="chip">@cs_department</span>
+          </div>
+
+          {/* Outlook keywords */}
+          <h4>Outlook keywords</h4>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+            <input type="text" placeholder="e.g. assignment, deadline" className="filter-input" />
+            <button className="add-btn">+</button>
+          </div>
+          <div>
+            <span className="chip">assignment</span>
+            <span className="chip">deadline</span>
+            <span className="chip">enrollment</span>
+          </div>
+
+          {/* Content Type */}
           <div className="filter-section">
-            <h4>Content Type</h4>
-            <div className="filter-options">
-              <label className="filter-option">
-                <input type="checkbox" defaultChecked />
-                <span>Emails</span>
-              </label>
-              <label className="filter-option">
-                <input type="checkbox" defaultChecked />
-                <span>Posts</span>
-              </label>
-            </div>
+            <label className="section-title">Content Type</label>
+            <label className="filter-option">
+              <input type="checkbox" defaultChecked />
+              <span>Emails</span>
+            </label>
+            <label className="filter-option">
+              <input type="checkbox" defaultChecked />
+              <span>Posts</span>
+            </label>
           </div>
           
+          {/* Date Range */}
           <div className="filter-section">
-            <h4>Date Range</h4>
-            <div className="filter-options">
-              <label className="filter-option">
-                <input type="radio" name="dateRange" value="today" />
-                <span>Today</span>
-              </label>
-              <label className="filter-option">
-                <input type="radio" name="dateRange" value="week" defaultChecked />
-                <span>This Week</span>
-              </label>
-              <label className="filter-option">
-                <input type="radio" name="dateRange" value="month" />
-                <span>This Month</span>
-              </label>
-              <label className="filter-option">
-                <input type="radio" name="dateRange" value="all" />
-                <span>All Time</span>
-              </label>
-            </div>
+            <label className="section-title">Date Range</label>
+            <label className="filter-option">
+              <input type="radio" name="dateRange" />
+              <span>Today</span>
+            </label>
+            <label className="filter-option">
+              <input type="radio" name="dateRange" defaultChecked />
+              <span>This Week</span>
+            </label>
+            <label className="filter-option">
+              <input type="radio" name="dateRange" />
+              <span>This Month</span>
+            </label>
+            <label className="filter-option">
+              <input type="radio" name="dateRange" />
+              <span>All Time</span>
+            </label>
           </div>
           
+          {/* Sort By */}
           <div className="filter-section">
-            <h4>Sort By</h4>
-            <div className="filter-options">
-              <label className="filter-option">
-                <input type="radio" name="sortBy" value="recent" defaultChecked />
-                <span>Most Recent</span>
-              </label>
-              <label className="filter-option">
-                <input type="radio" name="sortBy" value="oldest" />
-                <span>Oldest First</span>
-              </label>
-              <label className="filter-option">
-                <input type="radio" name="sortBy" value="type" />
-                <span>By Type</span>
-              </label>
-            </div>
+            <label className="section-title">Sort By</label>
+            <label className="filter-option">
+              <input type="radio" name="sortBy" defaultChecked />
+              <span>Most Recent</span>
+            </label>
+            <label className="filter-option">
+              <input type="radio" name="sortBy" />
+              <span>Oldest First</span>
+            </label>
+            <label className="filter-option">
+              <input type="radio" name="sortBy" />
+              <span>By Type</span>
+            </label>
           </div>
-          
-          <div className="filter-actions">
-            <button className="filter-apply">Apply Filters</button>
-            <button className="filter-clear">Clear All</button>
           </div>
         </div>
-      </div>
     </>
   );
 };

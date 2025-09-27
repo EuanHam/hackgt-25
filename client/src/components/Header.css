@@ -5,8 +5,10 @@
   padding: 1rem 2rem;
   box-shadow: var(--glass-shadow);
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   transition: var(--transition-smooth);
 }
@@ -295,4 +297,9 @@
   .header-right {
     gap: 0.25rem;
   }
+}
+
+.hamburger-menu:focus {
+  outline: none;
+  box-shadow: none;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useRef, useLayoutEffect, useEffect, useState } from 'react'
 import Header from './components/Header'
 import Feed from './components/Feed'
 import Sidebar from './components/Sidebar'
@@ -11,6 +11,9 @@ const TOKEN = import.meta.env.VITE_TEMPORARY_TOKEN
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+  const [headerHeight, setHeaderHeight] = useState(0)
+  const SIDEBAR_WIDTH = 340;
   const [feedItems, setFeedItems] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(true)
   const [imageModalState, setImageModalState] = useState({
@@ -44,6 +47,19 @@ function App() {
       alt: ''
     })
   }
+
+  useLayoutEffect(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+    const handleResize = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Function to truncate text to fit UI (approximately 2 lines)
   const truncatePreview = (text: string, maxLength: number = 100): string => {
@@ -155,8 +171,16 @@ function App() {
 
   return (
     <div className="app">
-      <Header onHamburgerClick={handleHamburgerClick} />
-      <main className={`main-content ${isSidebarOpen ? 'main-content-shifted' : ''}`}>
+    <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} />
+    <div
+      className="main-wrapper"
+      style={{
+        marginTop: headerHeight,
+        transition: 'transform 0.3s cubic-bezier(.4,0,.2,1)',
+        transform: isSidebarOpen ? `translateX(${SIDEBAR_WIDTH / 2}px)` : 'none'
+      }}
+    >
+      <main className="main-content">
         {loading ? (
           <div className="loading-spinner">
             <p>Loading feed...</p>
@@ -168,14 +192,15 @@ function App() {
           />
         )}
       </main>
-      <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} />
-      <ImageModal 
-        isOpen={imageModalState.isOpen}
-        imageUrl={imageModalState.imageUrl}
-        alt={imageModalState.alt}
-        onClose={handleImageModalClose}
-      />
     </div>
+    <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} headerHeight={headerHeight} />
+    <ImageModal 
+      isOpen={imageModalState.isOpen}
+      imageUrl={imageModalState.imageUrl}
+      alt={imageModalState.alt}
+      onClose={handleImageModalClose}
+    />
+  </div>
   )
 }
 

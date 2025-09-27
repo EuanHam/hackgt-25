@@ -5,15 +5,14 @@ interface HeaderProps {
   onHamburgerClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onHamburgerClick }) => {
-  return (
-    <header className="header">
+const Header = React.forwardRef<HTMLElement, HeaderProps>(
+  ({ onHamburgerClick }, ref) => (
+    <header className = "header" ref={ref}>
       <div className="header-content">
         {/* App Name on the left */}
         <div className="app-name">
           <h1>App Name</h1>
         </div>
-        
         {/* Search bar in the center */}
         <div className="search-container">
           <input 
@@ -24,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ onHamburgerClick }) => {
         </div>
         
         {/* Right side elements */}
-        <div className="header-right">
+        <div className="header-right">     
           {/* Hamburger menu */}
           <button 
             className="hamburger-menu" 
@@ -34,8 +33,7 @@ const Header: React.FC<HeaderProps> = ({ onHamburgerClick }) => {
             <div className="hamburger-line"></div>
             <div className="hamburger-line"></div>
             <div className="hamburger-line"></div>
-          </button>
-          
+          </button> 
           {/* Profile picture */}
           <div className="profile-picture" aria-label="Profile">
             <div className="profile-avatar"></div>
@@ -43,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ onHamburgerClick }) => {
         </div>
       </div>
     </header>
-  );
-};
+  )
+);
 
 export default Header;
