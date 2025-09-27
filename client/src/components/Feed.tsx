@@ -8,9 +8,10 @@ import './Feed.css';
 
 interface FeedProps {
   feedItems?: FeedItem[];
+  onImageClick?: (imageUrl: string, alt: string) => void;
 }
 
-const Feed: React.FC<FeedProps> = ({ feedItems }) => {
+const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
   // Use provided feedItems or fall back to JSON data
   const items = feedItems || feedData.feedItems;
 
@@ -38,6 +39,7 @@ const Feed: React.FC<FeedProps> = ({ feedItems }) => {
           posterName={item.posterName}
           description={item.description}
           timestamp={item.timestamp}
+          onImageClick={onImageClick}
         />
       );
     }
