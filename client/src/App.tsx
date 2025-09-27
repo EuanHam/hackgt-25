@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar'
 import ImageModal from './components/ImageModal'
 import './App.css'
 
+const TOKEN = import.meta.env.VITE_TEMPORARY_TOKEN
+
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [imageModalState, setImageModalState] = useState({
@@ -12,6 +14,8 @@ function App() {
     imageUrl: '',
     alt: ''
   })
+
+  console.log(TOKEN)
 
   const handleHamburgerClick = () => {
     setIsSidebarOpen(!isSidebarOpen)
@@ -44,7 +48,7 @@ function App() {
           'http://127.0.0.1:8000/emails?start_date=2025-09-26&max_results=5',
           {
             headers: {
-              'Authorization': 'Bearer PUT TOKEN HERE'
+              'Authorization': `Bearer ${TOKEN}`
             }
           }
         )
