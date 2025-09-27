@@ -8,6 +8,8 @@ from googleapiclient.errors import HttpError
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
+# test commit
+
 def get_email_body(payload):
     # Extracts the email body from the message payload.
     if 'parts' in payload:
