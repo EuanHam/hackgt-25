@@ -123,3 +123,5 @@ server/hackGt25/
 server/.env/
 server/credentials.json
 server/__pycache__/
+server/__pycache__/gmail.cpython-313.pyc
+.gitignore
