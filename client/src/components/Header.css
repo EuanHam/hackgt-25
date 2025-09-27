@@ -298,3 +298,8 @@
     gap: 0.25rem;
   }
 }
+
+.hamburger-menu:focus {
+  outline: none;
+  box-shadow: none;
+}

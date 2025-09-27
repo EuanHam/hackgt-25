@@ -13,7 +13,7 @@
 /* Sidebar container */
 .sidebar {
   position: fixed;
-  top: 0;
+  top: 0px;
   left: -340px; /* Hidden by default, slides in from left */
   width: 340px;
   height: 100vh;
@@ -36,7 +36,7 @@
   padding: 1.5rem 1.5rem 1rem 1.5rem;
   border-bottom: 1px solid #ececec;
   background-color: #fff;
-  border-radius: 12px 12px 0 0;
+  border-radius: 0px 12px 0px 0px;
 }
 
 .sidebar-header h3 {
@@ -64,7 +64,7 @@
 /* Sidebar content */
 .sidebar-content {
   background: #fff;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 12px 0px;
   border: 1px solid #ececec;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   padding: 2rem 1.5rem;

@@ -9,6 +9,7 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const headerRef = useRef<HTMLElement>(null)
   const [headerHeight, setHeaderHeight] = useState(0)
+  const SIDEBAR_WIDTH = 340;
   const [imageModalState, setImageModalState] = useState({
     isOpen: false,
     imageUrl: '',
@@ -54,21 +55,27 @@ function App() {
 
   return (
     <div className="app">
-      <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} />
-      <main
-        className={`main-content ${isSidebarOpen ? 'main-content-shifted' : ''}`}
-        style={{ marginTop: headerHeight }}
-        >
+    <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} />
+    <div
+      className="main-wrapper"
+      style={{
+        marginTop: headerHeight,
+        transition: 'transform 0.3s cubic-bezier(.4,0,.2,1)',
+        transform: isSidebarOpen ? `translateX(${SIDEBAR_WIDTH / 2}px)` : 'none'
+      }}
+    >
+      <main className="main-content">
         <Feed onImageClick={handleImageClick} />
       </main>
-      <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} headerHeight={headerHeight} />
-      <ImageModal 
-        isOpen={imageModalState.isOpen}
-        imageUrl={imageModalState.imageUrl}
-        alt={imageModalState.alt}
-        onClose={handleImageModalClose}
-      />
     </div>
+    <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} headerHeight={headerHeight} />
+    <ImageModal 
+      isOpen={imageModalState.isOpen}
+      imageUrl={imageModalState.imageUrl}
+      alt={imageModalState.alt}
+      onClose={handleImageModalClose}
+    />
+  </div>
   )
 }
 
