@@ -64,19 +64,20 @@
 
 .feed-column h3 {
   margin: 0 0 1.5rem 0;
-  color: var(--text-primary);
+  color: rgba(0, 0, 0, 0.8);
   font-size: 1.25rem;
   font-weight: 600;
   padding: 1rem 1.5rem;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   transition: var(--transition-smooth);
   position: relative;
   overflow: hidden;
+  text-shadow: none !important;
 }
 
 .feed-column h3::before {
@@ -104,9 +105,9 @@
 }
 
 .feed-column h3:hover {
-  background: var(--glass-bg-hover);
-  backdrop-filter: blur(var(--glass-blur-hover));
-  -webkit-backdrop-filter: blur(var(--glass-blur-hover));
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-color: var(--glass-border-hover);
   transform: translateY(-1px);
 }

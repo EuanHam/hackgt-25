@@ -101,7 +101,7 @@
 
 .post-timestamp {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: rgba(0, 0, 0, 0.8);
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -110,6 +110,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: var(--transition-fast);
   white-space: nowrap;
+  text-shadow: none;
 }
 
 .post:hover .post-timestamp {

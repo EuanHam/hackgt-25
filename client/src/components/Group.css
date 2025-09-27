@@ -118,7 +118,7 @@
 
 .group-timestamp {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: rgba(0, 0, 0, 0.8);
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -127,6 +127,7 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: var(--transition-fast);
   white-space: nowrap;
+  text-shadow: none;
 }
 
 .group:hover .group-timestamp {
@@ -185,6 +186,7 @@
   transition: var(--transition-fast);
   position: relative;
   overflow: hidden;
+  text-shadow: none;
 }
 
 .unread-badge::before {
@@ -217,6 +219,7 @@
 .no-messages {
   color: #9aa0a6;
   font-style: italic;
+  text-shadow: none;
 }
 
 /* Responsive adjustments */
