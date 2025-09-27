@@ -41,7 +41,6 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
           <Email
             key={item.id}
             sender={item.sender}
-            senderEmail={item.senderEmail}
             subject={item.subject}
             preview={item.preview}
             timestamp={formatDateOnly(item.timestamp)}
