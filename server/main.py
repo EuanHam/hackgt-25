@@ -1,7 +1,21 @@
 from fastapi import FastAPI, Header, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from gmail import get_gmail_emails
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",  # React dev server
+    "http://127.0.0.1:5173"   # optional, just in case
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],      # allow all HTTP methods
+    allow_headers=["*"],      # allow all headers including Authorization
+)
 
 @app.get("/")
 def root():
