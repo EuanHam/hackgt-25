@@ -118,6 +118,7 @@ ENV/
 
 # Project-specific virtualenv (do not track the created venv folder)
 server/hackGtBackend/
+server/hackGt25/
 
 server/.env/
 server/credentials.json
