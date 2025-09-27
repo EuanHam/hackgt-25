@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 1998;
   animation: fadeIn 0.3s ease;
 }
@@ -21,59 +21,44 @@
   align-items: center;
   justify-content: center;
   z-index: 1999;
-  padding: 2rem;
+  padding: 1rem;
   cursor: zoom-out;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 /* Image modal content wrapper */
 .image-modal-content {
   position: relative;
-  max-width: 60vw;
-  max-height: 70vh;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: default;
   animation: scaleIn 0.3s ease;
-}
-
-/* Close button */
-.image-modal-close {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  background-color: rgba(0, 0, 0, 0.6);
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1.2rem;
-  font-weight: normal;
-  cursor: pointer;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
-  z-index: 2000;
-}
-
-.image-modal-close:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-  transform: scale(1.05);
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* Modal image */
 .image-modal-image {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 85vh;
   width: auto;
   height: auto;
-  object-fit: contain;
-  border-radius: 8px;
+  object-fit: scale-down;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   cursor: zoom-out;
+  display: block;
+  margin: 0 auto;
+  object-position: center;
+  background-color: transparent;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border-radius: 0;
 }
 
 /* Animations */
@@ -98,40 +83,35 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
-  .image-modal {
-    padding: 1rem;
-  }
-  
-  .image-modal-content {
-    max-width: 75vw;
-    max-height: 75vh;
-  }
-  
-  .image-modal-close {
-    top: -10px;
-    right: -10px;
-    width: 28px;
-    height: 28px;
-    font-size: 1.1rem;
-  }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 1024px) {
   .image-modal {
     padding: 0.5rem;
   }
   
   .image-modal-content {
-    max-width: 85vw;
-    max-height: 85vh;
+    max-width: 95vw;
+    max-height: 95vh;
   }
   
-  .image-modal-close {
-    top: -5px;
-    right: -5px;
-    width: 24px;
-    height: 24px;
-    font-size: 1rem;
+  .image-modal-image {
+    max-height: 90vh;
   }
+  
+}
+
+@media (max-width: 480px) {
+  .image-modal {
+    padding: 0.25rem;
+  }
+  
+  .image-modal-content {
+    max-width: 98vw;
+    max-height: 98vh;
+  }
+  
+  .image-modal-image {
+    max-height: 95vh;
+    padding: 0.25rem;
+  }
+  
 }

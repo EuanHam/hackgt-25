@@ -1,6 +1,7 @@
 import React from 'react';
 import Email from './Email';
 import Post from './Post';
+import Group from './Group';
 import type { FeedItem } from '../types/feedTypes';
 import { partitionFeedItemsAdvanced } from '../utils/feedPartitioner';
 import feedData from '../data/feedData.json';
@@ -19,31 +20,42 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
   const { column1, column2, balanceScore } = partitionFeedItemsAdvanced(items as FeedItem[]);
 
   // Helper function to render feed item based on type
-  const renderFeedItem = (item: any) => {
-    if (item.type === 'email') {
-      return (
-        <Email
-          key={item.id}
-          sender={item.sender}
-          subject={item.subject}
-          preview={item.preview}
-          timestamp={item.timestamp}
-          isRead={item.isRead}
-        />
-      );
-    } else if (item.type === 'post') {
-      return (
-        <Post
-          key={item.id}
-          imageUrl={item.imageUrl}
-          posterName={item.posterName}
-          description={item.description}
-          timestamp={item.timestamp}
-          onImageClick={onImageClick}
-        />
-      );
+  const renderFeedItem = (item: FeedItem) => {
+    switch (item.type) {
+      case 'email':
+        return (
+          <Email
+            key={item.id}
+            sender={item.sender}
+            subject={item.subject}
+            preview={item.preview}
+            timestamp={item.timestamp}
+            isRead={item.isRead}
+          />
+        );
+      case 'post':
+        return (
+          <Post
+            key={item.id}
+            imageUrl={item.imageUrl}
+            posterName={item.posterName}
+            description={item.description}
+            timestamp={item.timestamp}
+            onImageClick={onImageClick}
+          />
+        );
+      case 'group':
+        return (
+          <Group
+            key={item.id}
+            groupName={item.groupName}
+            unreadCount={item.unreadCount}
+            timestamp={item.timestamp}
+          />
+        );
+      default:
+        return null;
     }
-    return null;
   };
 
   return (

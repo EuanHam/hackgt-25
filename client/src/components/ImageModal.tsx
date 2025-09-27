@@ -39,9 +39,6 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, imageUrl, alt, onClose 
       {/* Modal */}
       <div className="image-modal" onClick={onClose}>
         <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-          <button className="image-modal-close" onClick={onClose}>
-            ×
-          </button>
           <img 
             src={imageUrl} 
             alt={alt} 
