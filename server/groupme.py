@@ -1,26 +1,18 @@
-from fastapi import FastAPI, HTTPException
+import os
 import requests
 from dotenv import load_dotenv
-import os
-
-
-app = FastAPI()
-
-@app.get("/")
-def root():
-    return {"message": "Hello, World!"}
+from fastapi import HTTPException
 
 load_dotenv()
 
 ACCESS_TOKEN = os.getenv("GROUPME_ACCESS_TOKEN")
 if not ACCESS_TOKEN:
     raise RuntimeError("GROUPME_ACCESS_TOKEN not set in .env file")
+
 BASE_URL = "https://api.groupme.com/v3"
 
-# In-memory tracker for last seen messages per group
-last_seen = {}
 
-@app.get("/groups")
+# return a list of groups with their IDs and names
 def get_groups():
     url = f"{BASE_URL}/groups"
     params = {"token": ACCESS_TOKEN, "per_page": 50}
@@ -30,17 +22,14 @@ def get_groups():
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
 
     groups = resp.json()["response"]
-    return [{"id": g["id"], "name": g["name"]} for g in groups]
+    return [{"id": g["id"], "name": g["name"], "imageURL": g["image_url"]} for g in groups]
 
 
-@app.get("/groups/{group_id}/unread")
-def get_unread_messages(group_id: str, limit: int = 20):
+# return unread messages for a group since last seen
+def get_unread_messages(group_id: str, limit: int = 10):
     url = f"{BASE_URL}/groups/{group_id}/messages"
     params = {"token": ACCESS_TOKEN, "limit": limit}
 
-    # If we have a last_seen_id, fetch only newer messages
-    if group_id in last_seen:
-        params["since_id"] = last_seen[group_id]
 
     resp = requests.get(url, params=params)
 
@@ -49,12 +38,9 @@ def get_unread_messages(group_id: str, limit: int = 20):
 
     messages = resp.json()["response"]["messages"]
 
-    if messages:
-        # Update last_seen to the newest message
-        last_seen[group_id] = messages[0]["id"]
 
     return {
-        "unread_count": len(messages),
+        "group_id": group_id,
         "messages": [
             {
                 "id": m["id"],
