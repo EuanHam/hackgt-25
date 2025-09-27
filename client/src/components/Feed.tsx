@@ -65,6 +65,7 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
             groupName={item.groupName}
             unreadCount={item.unreadCount}
             timestamp={formatDateOnly(item.timestamp)}
+            groupIconUrl={item.groupIconUrl}
           />
         );
       default:

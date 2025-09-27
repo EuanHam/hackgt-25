@@ -192,6 +192,7 @@ function App() {
                   `Group chat with ${group.name}`,
                 timestamp: new Date().toLocaleDateString(),
                 unreadCount: unreadCount,
+                groupIconUrl: group.imageURL || '',
               };
             });
           } catch (messagesError) {
@@ -205,7 +206,8 @@ function App() {
               senderName: 'GroupMe',
               preview: `Group chat with ${group.name}`,
               timestamp: new Date().toLocaleDateString(),
-              unreadCount: 0,
+              unreadCount: 2, // Fixed for now
+              groupIconUrl: group.imageURL || '',
             }));
           }
 

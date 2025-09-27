@@ -5,6 +5,7 @@ interface GroupProps {
   groupName: string;
   unreadCount?: number;
   timestamp: string;
+  groupIconUrl?: string;
   onClick?: () => void;
 }
 
@@ -12,12 +13,19 @@ const Group: React.FC<GroupProps> = ({
   groupName, 
   unreadCount, 
   timestamp,
+  groupIconUrl,
   onClick 
 }) => {
+  const hasImage = groupIconUrl && groupIconUrl.length > 0;
+
   return (
     <div className="group" onClick={onClick}>
-      <div className="group-icon">
-        <span>{groupName.charAt(0).toUpperCase()}</span>
+      <div className={`group-icon ${hasImage ? 'has-image' : ''}`}>
+        {hasImage ? (
+          <img src={groupIconUrl} alt={groupName} className="group-icon-img" />
+        ) : (
+          <span>{groupName.charAt(0).toUpperCase()}</span>
+        )}
       </div>
       <div className="group-content">
         <div className="group-header">
