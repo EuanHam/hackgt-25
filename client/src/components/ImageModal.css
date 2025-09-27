@@ -28,8 +28,8 @@
 /* Image modal content wrapper */
 .image-modal-content {
   position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 60vw;
+  max-height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,34 +40,36 @@
 /* Close button */
 .image-modal-close {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background-color: rgba(255, 255, 255, 0.9);
+  top: -15px;
+  right: -15px;
+  background-color: rgba(0, 0, 0, 0.6);
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.5rem;
-  font-weight: bold;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  font-weight: normal;
   cursor: pointer;
-  color: #333;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
   z-index: 2000;
 }
 
 .image-modal-close:hover {
-  background-color: rgba(255, 255, 255, 1);
-  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
 }
 
 /* Modal image */
 .image-modal-image {
   max-width: 100%;
   max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -102,16 +104,16 @@
   }
   
   .image-modal-content {
-    max-width: 95vw;
-    max-height: 95vh;
+    max-width: 75vw;
+    max-height: 75vh;
   }
   
   .image-modal-close {
-    top: -5px;
-    right: -5px;
-    width: 36px;
-    height: 36px;
-    font-size: 1.25rem;
+    top: -10px;
+    right: -10px;
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
   }
 }
 
@@ -121,15 +123,15 @@
   }
   
   .image-modal-content {
-    max-width: 98vw;
-    max-height: 98vh;
+    max-width: 85vw;
+    max-height: 85vh;
   }
   
   .image-modal-close {
-    top: 0;
-    right: 0;
-    width: 32px;
-    height: 32px;
-    font-size: 1.1rem;
+    top: -5px;
+    right: -5px;
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
   }
 }
