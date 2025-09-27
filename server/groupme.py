@@ -54,7 +54,7 @@ def get_group_name(group_id: str) -> str:
 
 
 # Get messages for a single group
-def get_messages_for_group(group_id: str, limit: int = 10) -> dict[str, any]:
+def get_messages_for_group(group_id: str, limit: int) -> dict[str, any]:
     """
     Get messages for a single group
     """
