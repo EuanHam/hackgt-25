@@ -174,14 +174,13 @@ body {
   margin: 0 auto;
   width: 70%;
   box-sizing: border-box;
-  transition: transform 0.3s ease, width 0.3s ease;
+  transition: transform 0.3s ease;
   position: relative;
   z-index: 1;
 }
 
 .main-content-shifted {
-  transform: translateX(-150px);
-  width: calc(70% - 150px);
+  transform: translateX(-12%);
 }
 
 .main-content h1 {
