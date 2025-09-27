@@ -120,3 +120,4 @@ ENV/
 server/hackGtBackend/
 
 server/.env/
+server/credentials.json
