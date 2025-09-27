@@ -118,3 +118,5 @@ ENV/
 
 # Project-specific virtualenv (do not track the created venv folder)
 server/hackGtBackend/
+
+server/.env/
