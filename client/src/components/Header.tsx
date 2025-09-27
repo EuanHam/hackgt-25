@@ -10,22 +10,9 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
     <header className = "header" ref={ref}>
       <div className="header-content">
         {/* App Name on the left */}
-        <div className="app-name-group">
-          <div className="app-name">
-            <h1>App Name</h1>
-          </div>
-          {/* Hamburger menu */}
-          <button 
-            className="hamburger-menu" 
-            aria-label="Menu"
-            onClick={onHamburgerClick}
-          >
-            <div className="hamburger-line"></div>
-            <div className="hamburger-line"></div>
-            <div className="hamburger-line"></div>
-          </button>
+        <div className="app-name">
+          <h1>App Name</h1>
         </div>
-
         {/* Search bar in the center */}
         <div className="search-container">
           <input 
@@ -36,7 +23,17 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
         </div>
         
         {/* Right side elements */}
-        <div className="header-right">      
+        <div className="header-right">     
+          {/* Hamburger menu */}
+          <button 
+            className="hamburger-menu" 
+            aria-label="Menu"
+            onClick={onHamburgerClick}
+          >
+            <div className="hamburger-line"></div>
+            <div className="hamburger-line"></div>
+            <div className="hamburger-line"></div>
+          </button> 
           {/* Profile picture */}
           <div className="profile-picture" aria-label="Profile">
             <div className="profile-avatar"></div>

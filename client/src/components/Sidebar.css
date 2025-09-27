@@ -14,14 +14,14 @@
 .sidebar {
   position: fixed;
   top: 0;
-  right: -300px; /* Hidden by default */
-  width: 300px;
+  left: -340px; /* Hidden by default, slides in from left */
+  width: 340px;
   height: 100vh;
-  background-color: #f8f9fa;
-  border-left: 1px solid #e0e0e0;
+  background: transparent;
   z-index: 999;
-  transition: right 0.3s ease;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s cubic-bezier(.4,0,.2,1);
+  box-shadow: none;
+  border: none;
 }
 
 .sidebar.sidebar-open {
@@ -34,15 +34,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 1.5rem 1rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  border-bottom: 1px solid #ececec;
+  background-color: #fff;
+  border-radius: 12px 12px 0 0;
 }
 
 .sidebar-header h3 {
   margin: 0;
   font-size: 1.25rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #222;
 }
 
 .sidebar-close {
@@ -62,112 +63,126 @@
 
 /* Sidebar content */
 .sidebar-content {
-  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid #ececec;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 2rem 1.5rem;
   height: calc(100vh - 80px);
   overflow-y: auto;
+  font-family: inherit;
 }
 
-/* Filter sections */
-.filter-section {
-  margin-bottom: 2rem;
+/* Section titles */
+.sidebar-content h4,
+.sidebar-content .section-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.5rem 0;
+  color: #222;
 }
 
-.filter-section h4 {
-  margin: 0 0 1rem 0;
+/* Input fields */
+.sidebar-content input[type="text"] {
+  width: calc(100% - 44px);
+  padding: 0.7rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   font-size: 1rem;
-  font-weight: 600;
-  color: #333;
+  margin-bottom: 0.7rem;
+  background: #fafbfc;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.filter-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.sidebar-content input[type="text"]:focus {
+  border-color: #6366f1;
+  background: #fff;
 }
 
-.filter-option {
+/* Add button */
+.sidebar-content .add-btn {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.5rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.sidebar-content .add-btn:hover {
+  background: #4f46e5;
+}
+
+/* Chips/tags */
+.sidebar-content .chip {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #222;
+  border-radius: 16px;
+  padding: 0.3rem 1rem;
+  font-size: 0.98rem;
+  margin: 0.2rem 0.3rem 0.2rem 0;
+  font-weight: 500;
+}
+
+/* Checkbox and radio styling */
+.sidebar-content input[type="checkbox"],
+.sidebar-content input[type="radio"] {
+  accent-color: #6366f1;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.6em;
+  vertical-align: middle;
+}
+
+.sidebar-content label,
+.sidebar-content .filter-option {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  font-size: 1.05rem;
+  margin-bottom: 0.7rem;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.filter-option:hover {
-  background-color: #f0f0f0;
-}
-
-.filter-option input[type="checkbox"],
-.filter-option input[type="radio"] {
-  margin: 0;
-  cursor: pointer;
-}
-
-.filter-option span {
-  font-size: 0.9rem;
-  color: #333;
-  cursor: pointer;
-}
-
-/* Filter actions */
-.filter-actions {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.filter-apply,
-.filter-clear {
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: none;
+  padding: 0;
+  border-radius: 0;
 }
 
-.filter-apply {
-  background-color: #007bff;
-  color: white;
+.sidebar-content .filter-section {
+  margin-bottom: 1.5rem;
 }
 
-.filter-apply:hover {
-  background-color: #0056b3;
+.sidebar-content .filter-section:not(:first-child) {
+  margin-top: 1.5rem;
 }
 
-.filter-clear {
-  background-color: #f8f9fa;
-  color: #666;
-  border: 1px solid #e0e0e0;
-}
-
-.filter-clear:hover {
-  background-color: #e9ecef;
+/* Remove default button styles for radio/checkbox */
+.sidebar-content input[type="checkbox"]:focus,
+.sidebar-content input[type="radio"]:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .sidebar {
-    width: 280px;
-    right: -280px;
+    width: 100vw;
+    left: -100vw;
   }
-  
+  .sidebar.sidebar-open {
+    left: 0;
+  }
   .sidebar-content {
     padding: 1rem;
   }
-  
   .sidebar-header {
     padding: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 100%;
-    right: -100%;
   }
 }
