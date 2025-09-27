@@ -35,6 +35,14 @@ const Feed: React.FC<FeedProps> = ({ emails = [], posts = [] }) => {
       preview: 'Hi, just wanted to confirm our meeting tomorrow at 2 PM. Please let me know if you need to reschedule.',
       timestamp: '2 hours ago',
       isRead: false
+    },
+    {
+      id: '2',
+      sender: 'Sarah Wilson',
+      subject: 'Project Update',
+      preview: 'The project is progressing well. We should have the first draft ready by next week.',
+      timestamp: '4 hours ago',
+      isRead: true
     }
   ];
 
@@ -45,6 +53,13 @@ const Feed: React.FC<FeedProps> = ({ emails = [], posts = [] }) => {
       posterName: 'Jane Smith',
       description: 'Beautiful sunset from my hike today! The colors were absolutely amazing and the view was worth every step.',
       timestamp: '3 hours ago'
+    },
+    {
+      id: '2',
+      imageUrl: '/postImage.png',
+      posterName: 'Mike Johnson',
+      description: 'Just finished reading an amazing book about productivity. Highly recommend it to anyone looking to improve their workflow.',
+      timestamp: '1 day ago'
     }
   ];
 
@@ -59,30 +74,37 @@ const Feed: React.FC<FeedProps> = ({ emails = [], posts = [] }) => {
       
       <div className="feed-content">
         <div className="feed-column">
-          <h3>Emails</h3>
-          {displayEmails.map((email) => (
-            <Email
-              key={email.id}
-              sender={email.sender}
-              subject={email.subject}
-              preview={email.preview}
-              timestamp={email.timestamp}
-              isRead={email.isRead}
-            />
-          ))}
+          {/* Column 1: Email first, then Post */}
+          <Email
+            sender={displayEmails[0].sender}
+            subject={displayEmails[0].subject}
+            preview={displayEmails[0].preview}
+            timestamp={displayEmails[0].timestamp}
+            isRead={displayEmails[0].isRead}
+          />
+          <Post
+            imageUrl={displayPosts[0].imageUrl}
+            posterName={displayPosts[0].posterName}
+            description={displayPosts[0].description}
+            timestamp={displayPosts[0].timestamp}
+          />
         </div>
         
         <div className="feed-column">
-          <h3>Posts</h3>
-          {displayPosts.map((post) => (
-            <Post
-              key={post.id}
-              imageUrl={post.imageUrl}
-              posterName={post.posterName}
-              description={post.description}
-              timestamp={post.timestamp}
-            />
-          ))}
+          {/* Column 2: Post first, then Email */}
+          <Post
+            imageUrl={displayPosts[1].imageUrl}
+            posterName={displayPosts[1].posterName}
+            description={displayPosts[1].description}
+            timestamp={displayPosts[1].timestamp}
+          />
+          <Email
+            sender={displayEmails[1].sender}
+            subject={displayEmails[1].subject}
+            preview={displayEmails[1].preview}
+            timestamp={displayEmails[1].timestamp}
+            isRead={displayEmails[1].isRead}
+          />
         </div>
       </div>
     </div>
