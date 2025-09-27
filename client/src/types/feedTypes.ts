@@ -22,8 +22,10 @@ export interface PostFeedItem extends BaseFeedItem {
 
 export interface GroupFeedItem extends BaseFeedItem {
   type: 'group';
+  senderName: string;
+  preview: string;
   groupName: string;
-  unreadCount: number;
+  groupId: string;        // For GroupMe messages
 }
 
 export type FeedItem = EmailFeedItem | PostFeedItem | GroupFeedItem;
