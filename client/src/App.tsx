@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useLayoutEffect, useState } from 'react'
 import Header from './components/Header'
 import Feed from './components/Feed'
 import Sidebar from './components/Sidebar'
@@ -7,6 +7,8 @@ import './App.css'
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+  const [headerHeight, setHeaderHeight] = useState(0)
   const [imageModalState, setImageModalState] = useState({
     isOpen: false,
     imageUrl: '',
@@ -37,13 +39,29 @@ function App() {
     })
   }
 
+  useLayoutEffect(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+    const handleResize = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className="app">
-      <Header onHamburgerClick={handleHamburgerClick} />
-      <main className={`main-content ${isSidebarOpen ? 'main-content-shifted' : ''}`}>
+      <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} />
+      <main
+        className={`main-content ${isSidebarOpen ? 'main-content-shifted' : ''}`}
+        style={{ marginTop: headerHeight }}
+        >
         <Feed onImageClick={handleImageClick} />
       </main>
-      <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} />
+      <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} headerHeight={headerHeight} />
       <ImageModal 
         isOpen={imageModalState.isOpen}
         imageUrl={imageModalState.imageUrl}

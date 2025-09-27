@@ -25,7 +25,7 @@
 }
 
 .sidebar.sidebar-open {
-  right: 0;
+  left: 0;
 }
 
 /* Sidebar header */
