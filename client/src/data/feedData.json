@@ -8,15 +8,6 @@
       "timestamp": "September 27, 2025"
     },
     {
-      "id": "1",
-      "type": "email",
-      "sender": "John Doe",
-      "subject": "Meeting Tomorrow",
-      "preview": "Hi, just wanted to confirm our meeting tomorrow at 2 PM. Please let me know if you need to reschedule.",
-      "timestamp": "September 25, 2025",
-      "isRead": false
-    },
-    {
       "id": "g2",
       "type": "group",
       "groupName": "CS 1332 Study Group",
@@ -39,29 +30,11 @@
       "timestamp": "September 24, 2025"
     },
     {
-      "id": "4",
-      "type": "email",
-      "sender": "Sarah Wilson",
-      "subject": "Project Update",
-      "preview": "The project is progressing well. We should have the first draft ready by next week.",
-      "timestamp": "September 26, 2025",
-      "isRead": true
-    },
-    {
       "id": "g4",
       "type": "group",
       "groupName": "Gym Buddies",
       "unreadCount": 2,
       "timestamp": "September 27, 2025"
-    },
-    {
-      "id": "6",
-      "type": "email",
-      "sender": "David Kim",
-      "subject": "Weekend Plans",
-      "preview": "Hey everyone, just wanted to check if anyone is interested in hiking this weekend?",
-      "timestamp": "September 27, 2025",
-      "isRead": false
     },
     {
       "id": "7",
@@ -77,15 +50,6 @@
       "groupName": "Book Club",
       "unreadCount": 0,
       "timestamp": "September 20, 2025"
-    },
-    {
-      "id": "8",
-      "type": "email",
-      "sender": "Michael Brown",
-      "subject": "Document Review",
-      "preview": "I've reviewed the document and left some comments. Let me know if you have any questions.",
-      "timestamp": "September 24, 2025",
-      "isRead": true
     },
     {
       "id": "9",
