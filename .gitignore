@@ -108,3 +108,13 @@ dist/
 
 # Vite
 .vite/
+
+# Python virtual environments
+# Common names for virtualenvs
+venv/
+.venv/
+env/
+ENV/
+
+# Project-specific virtualenv (do not track the created venv folder)
+server/hackGtBackend/
