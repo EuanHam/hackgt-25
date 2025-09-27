@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Header from './components/Header'
 import Feed from './components/Feed'
 import Sidebar from './components/Sidebar'
@@ -36,6 +36,32 @@ function App() {
       alt: ''
     })
   }
+
+  useEffect(() => {
+    const fetchEmails = async () => {
+      try {
+        const response = await fetch(
+          'http://127.0.0.1:8000/emails?start_date=2025-09-26&max_results=5',
+          {
+            headers: {
+              'Authorization': 'Bearer PUT TOKEN HERE'
+            }
+          }
+        )
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        console.log('Fetched emails:', data)
+      } catch (error) {
+        console.error('Error fetching emails:', error)
+      }
+    }
+
+    fetchEmails()
+  }, [])
+
+  
 
   return (
     <div className="app">
