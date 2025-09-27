@@ -79,6 +79,15 @@
   gap: 0.75rem;
 }
 
+.email-sender[title] {
+  cursor: help;
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.3);
+}
+
+.email-sender[title]:hover {
+  border-bottom-color: rgba(0, 0, 0, 0.6);
+}
+
 .email-sender-avatar {
   width: 32px;
   height: 32px;

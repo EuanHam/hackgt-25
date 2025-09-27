@@ -16,6 +16,20 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
   // Use provided feedItems or fall back to JSON data
   const items = feedItems || feedData.feedItems;
 
+  // Function to format timestamp to show only date (no time)
+  const formatDateOnly = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        return dateString; // Return original if parsing fails
+      }
+      return date.toLocaleDateString();
+    } catch (error) {
+      return dateString; // Return original if parsing fails
+    }
+  };
+
   // Use the advanced partitioning algorithm to balance columns
   const { column1, column2, balanceScore } = partitionFeedItemsAdvanced(items as FeedItem[]);
 
@@ -27,9 +41,10 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
           <Email
             key={item.id}
             sender={item.sender}
+            senderEmail={item.senderEmail}
             subject={item.subject}
             preview={item.preview}
-            timestamp={item.timestamp}
+            timestamp={formatDateOnly(item.timestamp)}
             isRead={item.isRead}
           />
         );
@@ -40,7 +55,7 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
             imageUrl={item.imageUrl}
             posterName={item.posterName}
             description={item.description}
-            timestamp={item.timestamp}
+            timestamp={formatDateOnly(item.timestamp)}
             onImageClick={onImageClick}
           />
         );
@@ -50,7 +65,7 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
             key={item.id}
             groupName={item.groupName}
             unreadCount={item.unreadCount}
-            timestamp={item.timestamp}
+            timestamp={formatDateOnly(item.timestamp)}
           />
         );
       default:

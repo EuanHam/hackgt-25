@@ -4,13 +4,14 @@ import Feed from './components/Feed'
 import Sidebar from './components/Sidebar'
 import ImageModal from './components/ImageModal'
 import type { FeedItem } from './types/feedTypes'
+import feedData from './data/feedData.json'
 import './App.css'
 
 const TOKEN = import.meta.env.VITE_TEMPORARY_TOKEN
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [emails, setEmails] = useState<FeedItem[]>([])
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(true)
   const [imageModalState, setImageModalState] = useState({
     isOpen: false,
@@ -50,49 +51,104 @@ function App() {
     return text.slice(0, maxLength).trim() + '...';
   };
 
+  // Function to parse email "from" field and extract display name and email
+  const parseFromField = (from: string): { name: string; email: string } => {
+    if (!from) return { name: 'Unknown Sender', email: '' };
+    
+    // Handle formats like "John Doe <john@example.com>" or just "john@example.com"
+    const emailRegex = /<([^>]+)>/;
+    const emailMatch = from.match(emailRegex);
+    
+    if (emailMatch) {
+      // Format: "John Doe <john@example.com>"
+      const email = emailMatch[1];
+      const name = from.replace(emailRegex, '').trim();
+      return { name: name || email, email };
+    } else {
+      // Just an email address
+      const emailOnlyRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailOnlyRegex.test(from.trim())) {
+        return { name: from.trim(), email: from.trim() };
+      } else {
+        // Assume it's just a name
+        return { name: from.trim(), email: '' };
+      }
+    }
+  };
+
+  // Function to format timestamp to show only date (no time)
+  const formatDateOnly = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        return dateString; // Return original if parsing fails
+      }
+      return date.toLocaleDateString();
+    } catch (error) {
+      return dateString; // Return original if parsing fails
+    }
+  };
+
   useEffect(() => {
     const fetchEmails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          'http://127.0.0.1:8000/emails?start_date=2025-09-26&max_results=10',
-          {
-            headers: {
-              'Authorization': `Bearer ${TOKEN}`
+        
+        // Start with hardcoded feed data
+        const hardcodedItems = feedData.feedItems as FeedItem[];
+        
+        if (TOKEN) {
+          // Fetch emails from API
+          const response = await fetch(
+            'http://127.0.0.1:8000/emails?start_date=2025-09-26&max_results=10',
+            {
+              headers: {
+                'Authorization': `Bearer ${TOKEN}`
+              }
             }
+          )
+          
+          if (response.ok) {
+            const data = await response.json()
+            console.log('Fetched emails:', data)
+            
+            // Transform API response to FeedItem format
+            const transformedEmails: FeedItem[] = data.emails?.map((email: any, index: number) => {
+              const fromInfo = parseFromField(email.from || email.sender || '');
+              return {
+                id: email.id || `api-email-${index}`,
+                type: 'email' as const,
+                sender: fromInfo.name,
+                senderEmail: fromInfo.email,
+                subject: email.subject || 'No Subject',
+                preview: truncatePreview(email.body || email.snippet || 'No preview available'),
+                timestamp: formatDateOnly(email.date || new Date().toISOString()),
+                isRead: email.isRead || false
+              };
+            }) || [];
+            
+            // Combine hardcoded items with API emails
+            const combinedItems = [...transformedEmails, ...hardcodedItems];
+            setFeedItems(combinedItems);
+          } else {
+            console.error('Failed to fetch emails, using hardcoded data only');
+            setFeedItems(hardcodedItems);
           }
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+        } else {
+          console.log('No token provided, using hardcoded data only');
+          setFeedItems(hardcodedItems);
         }
-        const data = await response.json()
-        console.log('Fetched emails:', data)
-        
-        // Transform API response to FeedItem format
-        const transformedEmails: FeedItem[] = data.emails?.map((email: any, index: number) => ({
-          id: email.id || `email-${index}`,
-          type: 'email' as const,
-          sender: email.sender || 'Unknown Sender',
-          subject: email.subject || 'No Subject',
-          preview: truncatePreview(email.body || email.snippet || 'No preview available'),
-          timestamp: email.date || new Date().toLocaleDateString(),
-          isRead: email.isRead || false
-        })) || [];
-        
-        setEmails(transformedEmails);
       } catch (error) {
         console.error('Error fetching emails:', error)
-        setEmails([]); // Set empty array on error
+        // Fallback to hardcoded data on error
+        setFeedItems(feedData.feedItems as FeedItem[]);
       } finally {
         setLoading(false);
       }
     }
 
-    if (TOKEN) {
-      fetchEmails();
-    } else {
-      setLoading(false);
-    }
+    fetchEmails();
   }, [])
 
   
@@ -103,11 +159,11 @@ function App() {
       <main className={`main-content ${isSidebarOpen ? 'main-content-shifted' : ''}`}>
         {loading ? (
           <div className="loading-spinner">
-            <p>Loading emails...</p>
+            <p>Loading feed...</p>
           </div>
         ) : (
           <Feed 
-            feedItems={emails} 
+            feedItems={feedItems} 
             onImageClick={handleImageClick} 
           />
         )}
