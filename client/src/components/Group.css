@@ -1,9 +1,9 @@
 .group {
-  background: var(--glass-bg);
+  background: var(--group-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border-radius: 16px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--group-border);
   box-shadow: var(--glass-shadow);
   margin-bottom: 1rem;
   transition: var(--transition-smooth);
@@ -28,10 +28,10 @@
 }
 
 .group:hover {
-  background: var(--glass-bg-hover);
+  background: var(--group-bg-hover);
   backdrop-filter: blur(var(--glass-blur-hover));
   -webkit-backdrop-filter: blur(var(--glass-blur-hover));
-  border-color: var(--glass-border-hover);
+  border-color: var(--group-border-hover);
   box-shadow: var(--glass-shadow-hover);
   transform: translateY(-2px);
 }
@@ -41,10 +41,6 @@
   transform: translateY(0);
 }
 
-.group.unread {
-  background: var(--glass-unread-bg);
-  border-color: var(--glass-unread-border);
-}
 
 .group.unread::after {
   content: '';
@@ -106,7 +102,7 @@
 .group-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 0.5rem;
 }
 
@@ -119,8 +115,23 @@
   transition: var(--transition-fast);
 }
 
-.group:hover .group-name {
-  color: var(--primary-color);
+
+.group-timestamp {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.group:hover .group-timestamp {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
 }
 
 .group-description {
@@ -208,24 +219,43 @@
   font-style: italic;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 480px) {
   .group {
-    padding: 0.75rem;
+    padding: 1rem;
   }
   
   .group-icon {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     font-size: 1.25rem;
+    margin-right: 1rem;
   }
   
   .group-name {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
   
-  .unread-badge,
-  .no-messages {
-    font-size: 0.75rem;
+  .group-timestamp {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  .group-description {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    max-height: 1.4em;
+  }
+  
+  .group-meta {
+    flex-wrap: wrap;
+  }
+  
+  .unread-badge {
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: flex-start;
   }
 }
