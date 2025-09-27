@@ -1,0 +1,72 @@
+{
+  "feedItems": [
+    {
+      "id": "1",
+      "type": "email",
+      "sender": "John Doe",
+      "subject": "Meeting Tomorrow",
+      "preview": "Hi, just wanted to confirm our meeting tomorrow at 2 PM. Please let me know if you need to reschedule.",
+      "timestamp": "December 15, 2024",
+      "isRead": false
+    },
+    {
+      "id": "2",
+      "type": "post",
+      "imageUrl": "/postImage.png",
+      "posterName": "Jane Smith",
+      "description": "Beautiful sunset from my hike today! The colors were absolutely amazing and the view was worth every step.",
+      "timestamp": "December 14, 2024"
+    },
+    {
+      "id": "3",
+      "type": "post",
+      "imageUrl": "/postImage.png",
+      "posterName": "Mike Johnson",
+      "description": "Just finished reading an amazing book about productivity. Highly recommend it to anyone looking to improve their workflow.",
+      "timestamp": "December 10, 2024"
+    },
+    {
+      "id": "4",
+      "type": "email",
+      "sender": "Sarah Wilson",
+      "subject": "Project Update",
+      "preview": "The project is progressing well. We should have the first draft ready by next week.",
+      "timestamp": "December 12, 2024",
+      "isRead": true
+    },
+    {
+      "id": "5",
+      "type": "post",
+      "imageUrl": "/postImage.png",
+      "posterName": "Alex Chen",
+      "description": "Amazing coffee shop discovery today! The atmosphere is perfect for getting work done.",
+      "timestamp": "December 13, 2024"
+    },
+    {
+      "id": "6",
+      "type": "email",
+      "sender": "David Kim",
+      "subject": "Weekend Plans",
+      "preview": "Hey everyone, just wanted to check if anyone is interested in hiking this weekend?",
+      "timestamp": "December 11, 2024",
+      "isRead": false
+    },
+    {
+      "id": "7",
+      "type": "post",
+      "imageUrl": "/postImage.png",
+      "posterName": "Emma Wilson",
+      "description": "Just finished an incredible photography workshop. Can't wait to apply these new techniques!",
+      "timestamp": "December 9, 2024"
+    },
+    {
+      "id": "8",
+      "type": "email",
+      "sender": "Lisa Park",
+      "subject": "Team Lunch",
+      "preview": "Let's organize a team lunch for next week. Please let me know your availability.",
+      "timestamp": "December 8, 2024",
+      "isRead": true
+    }
+  ]
+}
