@@ -48,11 +48,11 @@ def get_emails(
 def groups():
     return groupme.get_groups()
 
-@app.get("/groups/{group_id}/unread")
-def unread(group_id: str, limit: int = 10):
-    return groupme.get_unread_messages(group_id, limit)
+@app.get("/groups/{group_id}/messages")
+def messages(group_id: str, limit: int = 10):
+    return groupme.get_all_groups_messages(group_id, limit)
 
 if __name__ == "__main__":
     # Example: fetch groups  when you run "python main.py"
     groups = groupme.get_groups()
-    unread_messages = groupme.get_unread_messages(groups[0]['id'])
+    unread_messages = groupme.get_all_groups_messages(limit=5)
