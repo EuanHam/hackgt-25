@@ -1,4 +1,5 @@
 import Header from './components/Header'
+import Feed from './components/Feed'
 import './App.css'
 
 function App() {
@@ -6,8 +7,7 @@ function App() {
     <div className="app">
       <Header />
       <main className="main-content">
-        <h1>Hello!</h1>
-        <p>type colina</p>
+        <Feed />
       </main>
     </div>
   )

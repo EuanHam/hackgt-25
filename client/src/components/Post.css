@@ -1,0 +1,109 @@
+.post {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  height: 200px; /* Fixed height for square aspect */
+}
+
+.post:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.post-image-container {
+  flex: 0 0 160px; /* 4:5 aspect ratio for 200px height = 160px width */
+  position: relative;
+  overflow: hidden;
+}
+
+.post-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.post:hover .post-image {
+  transform: scale(1.05);
+}
+
+.post-content {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.poster-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.post-timestamp {
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 0.5rem;
+}
+
+.post-description {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .post {
+    height: 150px;
+  }
+  
+  .post-image-container {
+    flex: 0 0 120px; /* Adjusted for smaller screens */
+  }
+  
+  .post-content {
+    padding: 0.75rem;
+  }
+  
+  .poster-name {
+    font-size: 0.85rem;
+  }
+  
+  .post-description {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  .post {
+    height: 120px;
+  }
+  
+  .post-image-container {
+    flex: 0 0 96px;
+  }
+  
+  .post-content {
+    padding: 0.5rem;
+  }
+}
