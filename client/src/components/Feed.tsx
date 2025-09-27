@@ -1,110 +1,68 @@
 import React from 'react';
 import Email from './Email';
 import Post from './Post';
+import type { FeedItem } from '../types/feedTypes';
+import { partitionFeedItemsAdvanced } from '../utils/feedPartitioner';
+import feedData from '../data/feedData.json';
 import './Feed.css';
 
-interface EmailData {
-  id: string;
-  sender: string;
-  subject: string;
-  preview: string;
-  timestamp: string;
-  isRead?: boolean;
-}
-
-interface PostData {
-  id: string;
-  imageUrl: string;
-  posterName: string;
-  description: string;
-  timestamp?: string;
-}
-
 interface FeedProps {
-  emails?: EmailData[];
-  posts?: PostData[];
+  feedItems?: FeedItem[];
 }
 
-const Feed: React.FC<FeedProps> = ({ emails = [], posts = [] }) => {
-  // Hard-coded sample data for now
-  const sampleEmails: EmailData[] = [
-    {
-      id: '1',
-      sender: 'John Doe',
-      subject: 'Meeting Tomorrow',
-      preview: 'Hi, just wanted to confirm our meeting tomorrow at 2 PM. Please let me know if you need to reschedule.',
-      timestamp: '2 hours ago',
-      isRead: false
-    },
-    {
-      id: '2',
-      sender: 'Sarah Wilson',
-      subject: 'Project Update',
-      preview: 'The project is progressing well. We should have the first draft ready by next week.',
-      timestamp: '4 hours ago',
-      isRead: true
-    }
-  ];
+const Feed: React.FC<FeedProps> = ({ feedItems }) => {
+  // Use provided feedItems or fall back to JSON data
+  const items = feedItems || feedData.feedItems;
 
-  const samplePosts: PostData[] = [
-    {
-      id: '1',
-      imageUrl: '/postImage.png',
-      posterName: 'Jane Smith',
-      description: 'Beautiful sunset from my hike today! The colors were absolutely amazing and the view was worth every step.',
-      timestamp: '3 hours ago'
-    },
-    {
-      id: '2',
-      imageUrl: '/postImage.png',
-      posterName: 'Mike Johnson',
-      description: 'Just finished reading an amazing book about productivity. Highly recommend it to anyone looking to improve their workflow.',
-      timestamp: '1 day ago'
-    }
-  ];
+  // Use the advanced partitioning algorithm to balance columns
+  const { column1, column2, balanceScore } = partitionFeedItemsAdvanced(items as FeedItem[]);
 
-  const displayEmails = emails.length > 0 ? emails : sampleEmails;
-  const displayPosts = posts.length > 0 ? posts : samplePosts;
+  // Helper function to render feed item based on type
+  const renderFeedItem = (item: any) => {
+    if (item.type === 'email') {
+      return (
+        <Email
+          key={item.id}
+          sender={item.sender}
+          subject={item.subject}
+          preview={item.preview}
+          timestamp={item.timestamp}
+          isRead={item.isRead}
+        />
+      );
+    } else if (item.type === 'post') {
+      return (
+        <Post
+          key={item.id}
+          imageUrl={item.imageUrl}
+          posterName={item.posterName}
+          description={item.description}
+          timestamp={item.timestamp}
+        />
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="feed">
       <div className="feed-header">
         <h2>Sort by (recent for example)</h2>
+        {/* Debug info - remove in production */}
+        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.5rem' }}>
+          Balance Score: {balanceScore.toFixed(2)} | 
+          Column 1: {column1.length} items | 
+          Column 2: {column2.length} items
+        </div>
       </div>
       
       <div className="feed-content">
         <div className="feed-column">
-          {/* Column 1: Email first, then Post */}
-          <Email
-            sender={displayEmails[0].sender}
-            subject={displayEmails[0].subject}
-            preview={displayEmails[0].preview}
-            timestamp={displayEmails[0].timestamp}
-            isRead={displayEmails[0].isRead}
-          />
-          <Post
-            imageUrl={displayPosts[0].imageUrl}
-            posterName={displayPosts[0].posterName}
-            description={displayPosts[0].description}
-            timestamp={displayPosts[0].timestamp}
-          />
+          {column1.map(renderFeedItem)}
         </div>
         
         <div className="feed-column">
-          {/* Column 2: Post first, then Email */}
-          <Post
-            imageUrl={displayPosts[1].imageUrl}
-            posterName={displayPosts[1].posterName}
-            description={displayPosts[1].description}
-            timestamp={displayPosts[1].timestamp}
-          />
-          <Email
-            sender={displayEmails[1].sender}
-            subject={displayEmails[1].subject}
-            preview={displayEmails[1].preview}
-            timestamp={displayEmails[1].timestamp}
-            isRead={displayEmails[1].isRead}
-          />
+          {column2.map(renderFeedItem)}
         </div>
       </div>
     </div>
