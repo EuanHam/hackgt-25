@@ -3,7 +3,7 @@ import './Group.css';
 
 interface GroupProps {
   groupName: string;
-  unreadCount: number;
+  unreadCount?: number;
   timestamp: string;
   onClick?: () => void;
 }
@@ -25,7 +25,7 @@ const Group: React.FC<GroupProps> = ({
           <div className="group-timestamp">{timestamp}</div>
         </div>
         <div className="group-unread">
-          {unreadCount > 0 ? (
+          {(unreadCount ?? 0) > 0 ? (
             <span className="unread-badge">
               {unreadCount} new message{unreadCount !== 1 ? 's' : ''}
             </span>
