@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from gmail import get_gmail_emails
-
 import groupme
+
 app = FastAPI()
 
 origins = [
@@ -42,7 +42,9 @@ def get_emails(
         emails = get_gmail_emails(token, max_results=max_results, start_date=start_date, end_date=end_date)
         return {"emails": emails}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))@app.get("/groups")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/groups")
 def groups():
     return groupme.get_groups()
 
@@ -54,5 +56,3 @@ if __name__ == "__main__":
     # Example: fetch groups  when you run "python main.py"
     groups = groupme.get_groups()
     unread_messages = groupme.get_unread_messages(groups[0]['id'])
-    print("Fetched groups:", groups)
-    print("Unread messages in first group:", groups[0]['name'], unread_messages)
