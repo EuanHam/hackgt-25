@@ -55,4 +55,5 @@ def messages(group_id: str, limit: int = 10):
 if __name__ == "__main__":
     # Example: fetch groups  when you run "python main.py"
     groups = groupme.get_groups()
-    unread_messages = groupme.get_all_groups_messages(limit=5)
+    print(groups)
+    # unread_messages = groupme.get_all_groups_messages(limit=5)
