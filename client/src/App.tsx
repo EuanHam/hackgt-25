@@ -31,6 +31,11 @@ function App() {
 }
 
   const [groupMeGroups, setGroupMeGroups] = useState<GroupMeGroup[]>([])
+  // Sidebar filter state
+  const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([])
+  const [contentFilters, setContentFilters] = useState<{emails:boolean; posts:boolean; groups:boolean}>({emails:true, posts:true, groups:true})
+  const [dateRange, setDateRange] = useState<string>('week')
+  const [sortBy, setSortBy] = useState<string>('recent')
   const [activeTab, setActiveTab] = useState<'emails' | 'groupme'>('emails')
 
 
@@ -194,7 +199,7 @@ function App() {
               groupIconUrl: g.imageURL || ''
             };
           });
-        } catch { console.log('Live GroupMe API failed, using mock'); }
+          } catch { console.log('Live GroupMe API failed, using mock'); }
       }
       if (!useApi || groupItems.length === 0) {
         groupItems = (mockGroupData as any[]).map(g => {
@@ -214,6 +219,8 @@ function App() {
         });
       }
       allItems = [...groupItems, ...allItems];
+      // set groups for sidebar (transform to the shape Sidebar expects)
+      setGroupMeGroups(groupItems.map(g => ({ id: (g as any).groupId || (g as any).id, name: (g as any).groupName, imageURL: (g as any).groupIconUrl || '' })));
 
       // Set the final combined items
       setFeedItems(allItems);
@@ -230,39 +237,96 @@ function App() {
   fetchData();
 }, [])
 
-  // Filter feed items by search query (case-insensitive)
+  // Filter feed items by search query and sidebar filters
   const filterFeedItems = (items: FeedItem[], query: string): FeedItem[] => {
-    if (!query || query.trim().length === 0) return items;
-    const q = query.trim().toLowerCase();
+    let results = items.slice();
 
-    return items.filter(item => {
-      if (item.type === 'email') {
-        const e = item as any;
-        return (
-          (e.sender && e.sender.toLowerCase().includes(q)) ||
-          (e.subject && e.subject.toLowerCase().includes(q)) ||
-          (e.preview && e.preview.toLowerCase().includes(q))
-        );
-      }
-
-      if (item.type === 'post') {
-        const p = item as any;
-        return (
-          (p.posterName && p.posterName.toLowerCase().includes(q)) ||
-          (p.description && p.description.toLowerCase().includes(q))
-        );
-      }
-
-      if (item.type === 'group') {
-        const g = item as any;
-        return (
-          (g.groupName && g.groupName.toLowerCase().includes(q)) ||
-          (g.preview && g.preview.toLowerCase().includes(q))
-        );
-      }
-
-      return false;
+    // Content type filtering
+    results = results.filter(item => {
+      if (item.type === 'email') return contentFilters.emails;
+      if (item.type === 'post') return contentFilters.posts;
+      if (item.type === 'group') return contentFilters.groups;
+      return true;
     });
+
+    // Filter by selected GroupMe accounts
+    if (selectedGroupIds.length > 0) {
+      results = results.filter(item => {
+        if (item.type !== 'group') return true;
+        const g = item as any;
+        return selectedGroupIds.includes(String(g.groupId)) || selectedGroupIds.includes(String(g.id));
+      });
+    }
+
+    // Date range filtering
+    if (dateRange && dateRange !== 'all') {
+      const now = new Date();
+      results = results.filter(item => {
+        let itemDate = new Date(item.timestamp);
+        if ((item as any).lastMessageTimestamp) {
+          itemDate = new Date(((item as any).lastMessageTimestamp) * 1000);
+        }
+        if (isNaN(itemDate.getTime())) return true;
+
+        if (dateRange === 'today') return itemDate.toDateString() === now.toDateString();
+        if (dateRange === 'week') {
+          const sevenDaysAgo = new Date(now);
+          sevenDaysAgo.setDate(now.getDate() - 7);
+          return itemDate >= sevenDaysAgo;
+        }
+        if (dateRange === 'month') {
+          const thirtyDaysAgo = new Date(now);
+          thirtyDaysAgo.setDate(now.getDate() - 30);
+          return itemDate >= thirtyDaysAgo;
+        }
+        return true;
+      });
+    }
+
+    // Text search
+    if (query && query.trim().length > 0) {
+      const q = query.trim().toLowerCase();
+      results = results.filter(item => {
+        if (item.type === 'email') {
+          const e = item as any;
+          return (
+            (e.sender && e.sender.toLowerCase().includes(q)) ||
+            (e.subject && e.subject.toLowerCase().includes(q)) ||
+            (e.preview && e.preview.toLowerCase().includes(q))
+          );
+        }
+        if (item.type === 'post') {
+          const p = item as any;
+          return (
+            (p.posterName && p.posterName.toLowerCase().includes(q)) ||
+            (p.description && p.description.toLowerCase().includes(q))
+          );
+        }
+        if (item.type === 'group') {
+          const g = item as any;
+          return (
+            (g.groupName && g.groupName.toLowerCase().includes(q)) ||
+            (g.preview && g.preview.toLowerCase().includes(q))
+          );
+        }
+        return false;
+      });
+    }
+
+    // Sorting
+    results.sort((a, b) => {
+      const getDate = (it: FeedItem) => {
+        if ((it as any).lastMessageTimestamp) return new Date(((it as any).lastMessageTimestamp) * 1000).getTime();
+        const d = new Date(it.timestamp).getTime();
+        return isNaN(d) ? 0 : d;
+      }
+      if (sortBy === 'recent' || !sortBy) return getDate(b) - getDate(a);
+      if (sortBy === 'oldest') return getDate(a) - getDate(b);
+      if (sortBy === 'type') return a.type.localeCompare(b.type);
+      return 0;
+    });
+
+    return results;
   }
 
   return (
@@ -294,6 +358,14 @@ function App() {
       onClose={handleSidebarClose} 
       headerHeight={headerHeight} 
       groups={groupMeGroups}
+      selectedGroupIds={selectedGroupIds}
+      onSelectedGroupsChange={setSelectedGroupIds}
+      contentFilters={contentFilters}
+      onContentFiltersChange={setContentFilters}
+      dateRange={dateRange}
+      onDateRangeChange={setDateRange}
+      sortBy={sortBy}
+      onSortByChange={setSortBy}
     />
     <ImageModal 
       isOpen={imageModalState.isOpen}
