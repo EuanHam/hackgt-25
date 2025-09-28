@@ -24,8 +24,20 @@
 }
 
 .app-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* space between logo and text */
   flex-shrink: 0;
   min-width: fit-content;
+}
+
+.app-logo {
+  height: 38px; /* adjust size as needed */
+  width: auto;
+  display: block;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-left: -4.5rem;
 }
 
 .app-name h1 {

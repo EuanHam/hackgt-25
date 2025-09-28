@@ -25,7 +25,12 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
         <div className="header-content">
           {/* App Name on the left */}
           <div className="app-name">
-            <h1>App Name</h1>
+            <img 
+              src="/Logo.png" 
+              alt="OneBoard Logo" 
+              className="app-logo" 
+            />
+            <h1>OneBoard</h1>
           </div>
           {/* Search bar in the center */}
           <div className="search-container">
