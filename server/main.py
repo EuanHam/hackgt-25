@@ -28,11 +28,12 @@ def get_emails(
     authorization: str = Header(...),
     start_date: str = Query(None, description="Start date (YYYY-MM-DD)"),
     end_date: str = Query(None, description="End date (YYYY-MM-DD)"),
-    max_results: int = Query(10, description="Max number of emails to fetch")
+    max_results: int = Query(10, description="Max number of emails to fetch"),
+    use_ai_filter: bool = Query(True, description="Whether to use OpenAI filtering")
 ):
     """
     Expects: Authorization: Bearer <access_token>
-    Optional query params: start_date, end_date, max_results
+    Optional query params: start_date, end_date, max_results, use_ai_filter
     """
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid authorization header format")
@@ -40,7 +41,7 @@ def get_emails(
     token = authorization.split(" ")[1]
 
     try:
-        emails, filtered_out = get_gmail_emails(token, max_results=max_results, start_date=start_date, end_date=end_date)
+        emails, filtered_out = get_gmail_emails(token, max_results=max_results, start_date=start_date, end_date=end_date, use_ai_filter=use_ai_filter)
 
         return {
             "emails": emails,

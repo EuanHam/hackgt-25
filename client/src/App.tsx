@@ -136,7 +136,7 @@ function App() {
       if (TOKEN) {
         try {
           const emailsResponse = await fetch(
-            'http://127.0.0.1:8000/emails?start_date=2025-09-26&max_results=10',
+            'http://127.0.0.1:8000/emails?start_date=2025-09-20&max_results=20&use_ai_filter=true',
             {
               headers: {
                 'Authorization': `Bearer ${TOKEN}`
@@ -158,7 +158,7 @@ function App() {
                 senderEmail: fromInfo.email,
                 subject: email.Subject || 'No Subject',
                 preview: truncatePreview(email.Body || email.snippet || 'No preview available'),
-                timestamp: formatDateOnly(email.date || new Date().toISOString()),
+                timestamp: formatDateOnly(email.Date || new Date().toISOString()),
                 isRead: email.isRead || false
               };
             }) || [];
