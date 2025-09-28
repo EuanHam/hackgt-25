@@ -12,7 +12,7 @@ interface FeedProps {
   onImageClick?: (imageUrl: string, alt: string) => void;
 }
 
-const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
+const Feed: React.FC<FeedProps> = ({ feedItems }) => {
   // Use provided feedItems or fall back to JSON data
   const items = feedItems || feedData.feedItems;
 
@@ -55,7 +55,6 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
             posterName={item.posterName}
             description={item.description}
             timestamp={formatDateOnly(item.timestamp)}
-            onImageClick={onImageClick}
           />
         );
       case 'group':

@@ -2,7 +2,7 @@
   {
     "group_id": "70209524",
     "group_name": "Free Food @ Tech (READ DESCRIPTION)",
-    "message_count": 5,
+    "message_count": 3,
     "messages": [
       {
         "id": "175902153234319292",
@@ -17,13 +17,21 @@
         "text": "Some leftover free food (halal) from Marrakech express right outside kirkwood room exhibition hall",
         "timestamp": 1759021107,
         "attachments": []
+      },
+      {
+        "id": "175901998234319292",
+        "sender": "Ryder Johnson",
+        "text": "Free Food at COC lobby right now",
+        "timestamp": 1759019982,
+        "attachments": []
       }
+
     ]
   },
   {
     "group_id": "110604993",
     "group_name": "Hackgt25",
-    "message_count": 5,
+    "message_count": 3,
     "messages": [
       {
         "id": "175901105491776191",
@@ -37,6 +45,13 @@
         "sender": "Annabelle Lee",
         "text": "Don’t read this message either",
         "timestamp": 1758992672,
+        "attachments": []
+      },
+      {
+        "id": "175899256491776191",
+        "sender": "Euan Ham",
+        "text": "Don’t read this message",
+        "timestamp": 1758992564,
         "attachments": []
       }
     ]
