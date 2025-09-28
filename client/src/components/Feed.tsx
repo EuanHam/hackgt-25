@@ -42,6 +42,7 @@ const Feed: React.FC<FeedProps> = ({ feedItems, onImageClick }) => {
             key={item.id}
             sender={item.sender}
             subject={item.subject}
+            body={item.body}
             preview={item.preview}
             timestamp={formatDateOnly(item.timestamp)}
             isRead={item.isRead}

@@ -159,3 +159,99 @@
     font-size: 0.8rem;
   }
 }
+
+/* Backdrop (same as Post.css) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 1000;
+}
+
+/* Modal container */
+.email-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  max-width: 700px;       /* wider than before */
+  width: 95%;
+  max-height: 80vh;       /* modal won’t go beyond 80% of viewport height */
+  border-radius: 12px;
+  overflow: hidden;       /* ensures scroll works properly */
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;  /* match post.css */
+  cursor: pointer;
+  color: rgba(46,46,46,0.7);
+  z-index: 1002;
+}
+.modal-close:hover {
+  color: rgba(46, 46, 46, 1);
+}
+
+/* Modal content */
+.email-modal-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;       /* scroll only content area */
+  padding: 20px;
+}
+
+/* Modal Header */
+.email-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.email-modal-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.email-modal-sender {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.email-modal-timestamp {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Modal Body */
+.email-modal-body {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.7;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .email-modal {
+    width: 90%;
+  }
+
+  .email-modal-header h1 {
+    font-size: 1.8rem;
+  }
+}

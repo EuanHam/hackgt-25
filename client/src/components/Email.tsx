@@ -6,6 +6,7 @@ interface EmailProps {
   subject: string;
   preview: string;
   timestamp: string;
+  body?: string; 
   isRead?: boolean;
 }
 
@@ -14,13 +15,14 @@ const Email: React.FC<EmailProps> = ({
   subject, 
   preview, 
   timestamp, 
+  body,
   isRead = false 
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      {/* Card */}
+      {/* Email Card */}
       <div 
         className={`email ${isRead ? 'read' : 'unread'}`} 
         onClick={() => setIsModalOpen(true)}
@@ -36,15 +38,31 @@ const Email: React.FC<EmailProps> = ({
       {/* Modal */}
       {isModalOpen && (
         <>
-          <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}></div>
-          <div className="modal">
-            <div className="modal-header">
-              <h3>{sender}</h3>
-              <button className="modal-close" onClick={() => setIsModalOpen(false)}>×</button>
-            </div>
-            <div className="modal-body">
-              <p><strong>Subject:</strong> {subject}</p>
-              <p>{preview}</p>
+          <div 
+            className="modal-backdrop" 
+            onClick={() => setIsModalOpen(false)}
+          ></div>
+
+          <div className="email-modal">
+            {/* Close button */}
+            <button 
+              className="modal-close" 
+              onClick={() => setIsModalOpen(false)}
+            >
+              ×
+            </button>
+
+            {/* Modal content */}
+            <div className="email-modal-content">
+              <div className="email-modal-header">
+                <h1>{subject}</h1>
+                <div className="email-modal-sender">{sender}</div>
+                <div className="email-modal-timestamp">{timestamp}</div>
+              </div>
+
+              <div className="email-modal-body">
+                <p>{body}</p> {/*fall back to preview if no body */}
+              </div>
             </div>
           </div>
         </>
