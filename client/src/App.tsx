@@ -156,16 +156,6 @@ function App() {
     const hardcodedItems = (feedData.feedItems as FeedItem[]).filter(item => item.type !== 'group');
     let allItems: FeedItem[] = [...hardcodedItems];
 
-<<<<<<< HEAD
-      // Fetch emails if token is available
-      if (TOKEN) {
-        try {
-          const emailsResponse = await fetch(
-            'http://127.0.0.1:8000/emails?start_date=2025-09-20&max_results=20&use_ai_filter=true',
-            {
-              headers: {
-                'Authorization': `Bearer ${TOKEN}`
-=======
         // Fetch emails if token is available
         if (TOKEN) {
           try {
@@ -175,7 +165,6 @@ function App() {
                 headers: {
                   'Authorization': `Bearer ${TOKEN}`
                 }
->>>>>>> 8fb53d9 (calendar + feature)
               }
             );
             
@@ -203,36 +192,8 @@ function App() {
             } else {
               console.error('Failed to fetch emails, using hardcoded data only');
             }
-<<<<<<< HEAD
-          );
-          
-          if (emailsResponse.ok) {
-            const emailsData = await emailsResponse.json();
-            console.log('Fetched emails:', emailsData);
-            
-            // Transform API response to FeedItem format
-            const transformedEmails: FeedItem[] = emailsData.emails?.map((email: any, index: number) => {
-              const fromInfo = parseFromField(email.From || email.sender || '');
-              return {
-                id: email.id || `api-email-${index}`,
-                type: 'email' as const,
-                sender: fromInfo.name,
-                senderEmail: fromInfo.email,
-                subject: email.Subject || 'No Subject',
-                preview: truncatePreview(email.Body || email.snippet || 'No preview available'),
-                timestamp: formatDateOnly(email.Date || new Date().toISOString()),
-                isRead: email.isRead || false
-              };
-            }) || [];
-            
-            // Add emails to the beginning of the list
-            allItems = [...transformedEmails, ...allItems];
-          } else {
-            console.error('Failed to fetch emails, using hardcoded data only');
-=======
           } catch (emailError) {
             console.error('Error fetching emails:', emailError);
->>>>>>> 8fb53d9 (calendar + feature)
           }
         } else {
           console.log('No token provided, skipping email fetch');
