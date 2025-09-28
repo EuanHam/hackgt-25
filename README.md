@@ -1,6 +1,8 @@
 # ✨ HackGT-XII: OneBoard - One place for everything ✨
 
 A full-stack web application built with React, TypeScript, Vite (Frontend) & FastAPI, Python (backend) with OpenAI feature.
+<img width="1500" height="758" alt="IMG_6788" src="https://github.com/user-attachments/assets/74d9a1c0-a4ed-4734-887d-bed4dc42f43c" />
+
 
 ### Project Contributers 
 🧋 Eileen Chen 🧋 Tiberius Colina 🧋 Euan Ham 🧋 Annabelle Lee 🧋
