@@ -24,6 +24,16 @@ function App() {
     alt: ''
   })
 
+  interface GroupMeGroup {
+  id: string;
+  name: string;
+  imageURL: string;
+}
+
+  const [groupMeGroups, setGroupMeGroups] = useState<GroupMeGroup[]>([])
+  const [activeTab, setActiveTab] = useState<'emails' | 'groupme'>('emails')
+
+
   console.log(TOKEN)
 
   const handleHamburgerClick = () => {
@@ -279,7 +289,12 @@ function App() {
         )}
       </main>
     </div>
-    <Sidebar isOpen={isSidebarOpen} onClose={handleSidebarClose} headerHeight={headerHeight} />
+    <Sidebar 
+      isOpen={isSidebarOpen} 
+      onClose={handleSidebarClose} 
+      headerHeight={headerHeight} 
+      groups={groupMeGroups}
+    />
     <ImageModal 
       isOpen={imageModalState.isOpen}
       imageUrl={imageModalState.imageUrl}
