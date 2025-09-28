@@ -182,6 +182,7 @@ function App() {
                   senderEmail: fromInfo.email,
                   subject: email.Subject || 'No Subject',
                   preview: truncatePreview(email.Body || email.snippet || 'No preview available'),
+                  body: email.Body || email.snippet || 'No content available',  // 👈 keep full text here
                   timestamp: formatDateOnly(email.date || new Date().toISOString()),
                   isRead: email.isRead || false
                 };

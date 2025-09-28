@@ -10,6 +10,7 @@ export interface EmailFeedItem extends BaseFeedItem {
   senderEmail?: string;
   subject: string;
   preview: string;
+  body?: string;
   isRead?: boolean;
 }
 
