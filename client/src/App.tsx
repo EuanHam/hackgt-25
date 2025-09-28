@@ -6,6 +6,7 @@ import ImageModal from './components/ImageModal'
 import type { FeedItem } from './types/feedTypes'
 import feedData from './data/feedData.json'
 import mockGroupData from './data/group.json'
+import Footer from './components/Footer'
 import './App.css'
 
 const TOKEN = import.meta.env.VITE_TEMPORARY_TOKEN
@@ -23,12 +24,13 @@ function App() {
     imageUrl: '',
     alt: ''
   })
+  const [showFooter, setShowFooter] = useState(false)
 
   interface GroupMeGroup {
-  id: string;
-  name: string;
-  imageURL: string;
-}
+    id: string;
+    name: string;
+    imageURL: string;
+  }
 
   const [groupMeGroups, setGroupMeGroups] = useState<GroupMeGroup[]>([])
   // Sidebar filter state
@@ -37,7 +39,6 @@ function App() {
   const [dateRange, setDateRange] = useState<string>('week')
   const [sortBy, setSortBy] = useState<string>('recent')
   const [activeTab, setActiveTab] = useState<'emails' | 'groupme'>('emails')
-
 
   console.log(TOKEN)
 
@@ -65,6 +66,17 @@ function App() {
     })
   }
 
+  // Check if user has scrolled to the bottom
+  const checkScrollPosition = () => {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop
+    const windowHeight = window.innerHeight
+    const documentHeight = document.documentElement.scrollHeight
+    
+    // Show footer when within 100px of the bottom
+    const isAtBottom = scrollTop + windowHeight >= documentHeight
+    setShowFooter(isAtBottom)
+  }
+
   useLayoutEffect(() => {
     if (headerRef.current) {
       setHeaderHeight(headerRef.current.offsetHeight);
@@ -74,9 +86,21 @@ function App() {
         setHeaderHeight(headerRef.current.offsetHeight);
       }
     };
+    
+    // Add scroll event listener
+    window.addEventListener("scroll", checkScrollPosition);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    
+    return () => {
+      window.removeEventListener("scroll", checkScrollPosition);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  // Also check scroll position when content loads or changes
+  useEffect(() => {
+    checkScrollPosition()
+  }, [feedItems, loading])
 
   // Function to truncate text to fit UI (approximately 2 lines)
   const truncatePreview = (text: string, maxLength: number = 100): string => {
@@ -124,118 +148,118 @@ function App() {
   };
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-  // Start with hardcoded feed data (exclude groups, which come from API)
-  const hardcodedItems = (feedData.feedItems as FeedItem[]).filter(item => item.type !== 'group');
-  let allItems: FeedItem[] = [...hardcodedItems];
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+    // Start with hardcoded feed data (exclude groups, which come from API)
+    const hardcodedItems = (feedData.feedItems as FeedItem[]).filter(item => item.type !== 'group');
+    let allItems: FeedItem[] = [...hardcodedItems];
 
-      // Fetch emails if token is available
-      if (TOKEN) {
-        try {
-          const emailsResponse = await fetch(
-            'http://127.0.0.1:8000/emails?start_date=2025-09-20&max_results=20&use_ai_filter=true',
-            {
-              headers: {
-                'Authorization': `Bearer ${TOKEN}`
+        // Fetch emails if token is available
+        if (TOKEN) {
+          try {
+            const emailsResponse = await fetch(
+              'http://127.0.0.1:8000/emails?start_date=2025-09-26&max_results=10',
+              {
+                headers: {
+                  'Authorization': `Bearer ${TOKEN}`
+                }
               }
+            );
+            
+            if (emailsResponse.ok) {
+              const emailsData = await emailsResponse.json();
+              console.log('Fetched emails:', emailsData);
+              
+              // Transform API response to FeedItem format
+              const transformedEmails: FeedItem[] = emailsData.emails?.map((email: any, index: number) => {
+                const fromInfo = parseFromField(email.From || email.sender || '');
+                return {
+                  id: email.id || `api-email-${index}`,
+                  type: 'email' as const,
+                  sender: fromInfo.name,
+                  senderEmail: fromInfo.email,
+                  subject: email.Subject || 'No Subject',
+                  preview: truncatePreview(email.Body || email.snippet || 'No preview available'),
+                  timestamp: formatDateOnly(email.date || new Date().toISOString()),
+                  isRead: email.isRead || false
+                };
+              }) || [];
+              
+              // Add emails to the beginning of the list
+              allItems = [...transformedEmails, ...allItems];
+            } else {
+              console.error('Failed to fetch emails, using hardcoded data only');
             }
-          );
-          
-          if (emailsResponse.ok) {
-            const emailsData = await emailsResponse.json();
-            console.log('Fetched emails:', emailsData);
-            
-            // Transform API response to FeedItem format
-            const transformedEmails: FeedItem[] = emailsData.emails?.map((email: any, index: number) => {
-              const fromInfo = parseFromField(email.From || email.sender || '');
-              return {
-                id: email.id || `api-email-${index}`,
-                type: 'email' as const,
-                sender: fromInfo.name,
-                senderEmail: fromInfo.email,
-                subject: email.Subject || 'No Subject',
-                preview: truncatePreview(email.Body || email.snippet || 'No preview available'),
-                timestamp: formatDateOnly(email.Date || new Date().toISOString()),
-                isRead: email.isRead || false
-              };
-            }) || [];
-            
-            // Add emails to the beginning of the list
-            allItems = [...transformedEmails, ...allItems];
-          } else {
-            console.error('Failed to fetch emails, using hardcoded data only');
+          } catch (emailError) {
+            console.error('Error fetching emails:', emailError);
           }
-        } catch (emailError) {
-          console.error('Error fetching emails:', emailError);
+        } else {
+          console.log('No token provided, skipping email fetch');
         }
-      } else {
-        console.log('No token provided, skipping email fetch');
-      }
 
-      // GroupMe data (live or mock)
-      const useApi = import.meta.env.VITE_USE_GROUPME_API === 'true';
-      let groupItems: FeedItem[] = [];
-      if (useApi) {
-        try {
-          const groupsRes = await fetch('http://127.0.0.1:8000/groups');
-          const groups = groupsRes.ok ? await groupsRes.json() : [];
-          const msgsRes = await fetch('http://127.0.0.1:8000/groups/messages?limit=5');
-          const msgs = msgsRes.ok ? await msgsRes.json() : [];
-          groupItems = groups.map((g: any) => {
-            const m = msgs.find((x: any) => x.group_id === g.id);
-            const lastTs = m?.messages?.[0]?.timestamp;
+        // GroupMe data (live or mock)
+        const useApi = import.meta.env.VITE_USE_GROUPME_API === 'true';
+        let groupItems: FeedItem[] = [];
+        if (useApi) {
+          try {
+            const groupsRes = await fetch('http://127.0.0.1:8000/groups');
+            const groups = groupsRes.ok ? await groupsRes.json() : [];
+            const msgsRes = await fetch('http://127.0.0.1:8000/groups/messages?limit=5');
+            const msgs = msgsRes.ok ? await msgsRes.json() : [];
+            groupItems = groups.map((g: any) => {
+              const m = msgs.find((x: any) => x.group_id === g.id);
+              const lastTs = m?.messages?.[0]?.timestamp;
+              return {
+                id: `group-${g.id}`,
+                type: 'group' as const,
+                groupName: g.name,
+                groupId: g.id,
+                preview: m ? `Latest: ${m.messages[0]?.text?.slice(0,50)}` : `Group chat with ${g.name}`,
+                timestamp: lastTs ? formatDateOnly(new Date(lastTs*1000).toISOString()) : formatDateOnly(new Date().toISOString()),
+                unreadCount: m?.message_count || 0,
+                lastMessageTimestamp: lastTs,
+                groupIconUrl: g.imageURL || ''
+              };
+            });
+            } catch { console.log('Live GroupMe API failed, using mock'); }
+        }
+        if (!useApi || groupItems.length === 0) {
+          groupItems = (mockGroupData as any[]).map(g => {
+            const last = g.messages[0];
             return {
-              id: `group-${g.id}`,
+              id: `mock-${g.group_id}`,
               type: 'group' as const,
-              groupName: g.name,
-              groupId: g.id,
-              preview: m ? `Latest: ${m.messages[0]?.text?.slice(0,50)}` : `Group chat with ${g.name}`,
-              timestamp: lastTs ? formatDateOnly(new Date(lastTs*1000).toISOString()) : formatDateOnly(new Date().toISOString()),
-              unreadCount: m?.message_count || 0,
-              lastMessageTimestamp: lastTs,
-              groupIconUrl: g.imageURL || ''
+              groupName: g.group_name,
+              groupId: g.group_id,
+              senderName: 'GroupMe',
+              preview: last?.text ? `Latest: ${last.text.slice(0,50)}` : `Group chat with ${g.group_name}`,
+              timestamp: last ? formatDateOnly(new Date(last.timestamp*1000).toISOString()) : formatDateOnly(new Date().toISOString()),
+              unreadCount: g.message_count,
+              lastMessageTimestamp: last?.timestamp,
+              groupIconUrl: ''
             };
           });
-          } catch { console.log('Live GroupMe API failed, using mock'); }
-      }
-      if (!useApi || groupItems.length === 0) {
-        groupItems = (mockGroupData as any[]).map(g => {
-          const last = g.messages[0];
-          return {
-            id: `mock-${g.group_id}`,
-            type: 'group' as const,
-            groupName: g.group_name,
-            groupId: g.group_id,
-            senderName: 'GroupMe',
-            preview: last?.text ? `Latest: ${last.text.slice(0,50)}` : `Group chat with ${g.group_name}`,
-            timestamp: last ? formatDateOnly(new Date(last.timestamp*1000).toISOString()) : formatDateOnly(new Date().toISOString()),
-            unreadCount: g.message_count,
-            lastMessageTimestamp: last?.timestamp,
-            groupIconUrl: ''
-          };
-        });
-      }
-      allItems = [...groupItems, ...allItems];
-      // set groups for sidebar (transform to the shape Sidebar expects)
-      setGroupMeGroups(groupItems.map(g => ({ id: (g as any).groupId || (g as any).id, name: (g as any).groupName, imageURL: (g as any).groupIconUrl || '' })));
+        }
+        allItems = [...groupItems, ...allItems];
+        // set groups for sidebar (transform to the shape Sidebar expects)
+        setGroupMeGroups(groupItems.map(g => ({ id: (g as any).groupId || (g as any).id, name: (g as any).groupName, imageURL: (g as any).groupIconUrl || '' })));
 
-      // Set the final combined items
-      setFeedItems(allItems);
+        // Set the final combined items
+        setFeedItems(allItems);
 
-    } catch (error) {
-      console.error('Error in fetchData:', error);
-      // Fallback to hardcoded data on error
-      setFeedItems(feedData.feedItems as FeedItem[]);
-    } finally {
-      setLoading(false);
+      } catch (error) {
+        console.error('Error in fetchData:', error);
+        // Fallback to hardcoded data on error
+        setFeedItems(feedData.feedItems as FeedItem[]);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  fetchData();
-}, [])
+    fetchData();
+  }, [])
 
   // Filter feed items by search query and sidebar filters
   const filterFeedItems = (items: FeedItem[], query: string): FeedItem[] => {
@@ -331,49 +355,67 @@ function App() {
 
   return (
     <div className="app">
-    <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} onSearch={setSearchQuery} />
-    <div
-      className="main-wrapper"
-      style={{
-        marginTop: headerHeight,
-        transition: 'transform 0.3s cubic-bezier(.4,0,.2,1)',
-        transform: isSidebarOpen ? `translateX(${SIDEBAR_WIDTH / 2}px)` : 'none'
-      }}
-    >
-      <main className="main-content">
-        {loading ? (
-          <div className="loading-spinner">
-            <p>Loading feed...</p>
-          </div>
-        ) : (
-          <Feed 
-            feedItems={filterFeedItems(feedItems, searchQuery)} 
-            onImageClick={handleImageClick} 
-          />
-        )}
-      </main>
+      <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} onSearch={setSearchQuery} />
+        <div
+          className="main-wrapper"
+          style={{
+            marginTop: headerHeight,
+            transition: 'transform 0.3s cubic-bezier(.4,0,.2,1)',
+            transform: isSidebarOpen ? `translateX(${SIDEBAR_WIDTH / 2}px)` : 'none'
+          }}
+        >
+          <main className="main-content">
+            {loading ? (
+              <div className="loading-spinner">
+                <p>Loading feed...</p>
+              </div>
+            ) : (
+              <Feed 
+                feedItems={filterFeedItems(feedItems, searchQuery)} 
+                onImageClick={handleImageClick} 
+              />
+            )}
+          </main>
+
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', paddingBottom: 80}}>
+          {typeof window !== 'undefined' && (
+            <iframe
+              src="https://calendar.google.com/calendar/embed?src=hackgtuser%40gmail.com&ctz=America%2FNew_York"
+              style={{ border: 'none', width: 800, height: 600 }}
+              title="HackGT Google Calendar"
+              allow="fullscreen"
+            ></iframe>
+          )}
+        </div>
+
+      </div>
+
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={handleSidebarClose} 
+        headerHeight={headerHeight} 
+        groups={groupMeGroups}
+        selectedGroupIds={selectedGroupIds}
+        onSelectedGroupsChange={setSelectedGroupIds}
+        contentFilters={contentFilters}
+        onContentFiltersChange={setContentFilters}
+        dateRange={dateRange}
+        onDateRangeChange={setDateRange}
+        sortBy={sortBy}
+        onSortByChange={setSortBy}
+      />
+      <ImageModal 
+        isOpen={imageModalState.isOpen}
+        imageUrl={imageModalState.imageUrl}
+        alt={imageModalState.alt}
+        onClose={handleImageModalClose}
+      />
+      
+      {/* Conditionally render Footer based on scroll position */}
+      {showFooter && <Footer />}
+
     </div>
-    <Sidebar 
-      isOpen={isSidebarOpen} 
-      onClose={handleSidebarClose} 
-      headerHeight={headerHeight} 
-      groups={groupMeGroups}
-      selectedGroupIds={selectedGroupIds}
-      onSelectedGroupsChange={setSelectedGroupIds}
-      contentFilters={contentFilters}
-      onContentFiltersChange={setContentFilters}
-      dateRange={dateRange}
-      onDateRangeChange={setDateRange}
-      sortBy={sortBy}
-      onSortByChange={setSortBy}
-    />
-    <ImageModal 
-      isOpen={imageModalState.isOpen}
-      imageUrl={imageModalState.imageUrl}
-      alt={imageModalState.alt}
-      onClose={handleImageModalClose}
-    />
-  </div>
+    
   )
 }
 
