@@ -93,10 +93,13 @@
   border-radius: 0 0 12px 0;
   padding: 2rem 1.5rem;
   height: calc(100vh - 80px);
+
+  /* allow scrolling */
   overflow-y: auto;
+  overflow-x: hidden; /* optional, keeps horizontal tidy */
+
   transition: var(--transition-smooth);
   position: relative;
-  overflow: hidden;
 }
 
 .sidebar-content::before {

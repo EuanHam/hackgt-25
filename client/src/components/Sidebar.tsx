@@ -14,21 +14,6 @@ const accountOptions = [
   { value: "@sports_club", label: "@sports_club" },
 ];
 
-const customStyles = {
-  control: (provided: any) => ({
-    ...provided,
-    borderRadius: "6px",
-    borderColor: "#ccc",
-    minHeight: "38px",
-    boxShadow: "none",
-    "&:hover": { borderColor: "#888" },
-  }),
-  menu: (provided: any) => ({
-    ...provided,
-    zIndex: 9999, // makes sure it pops over the sidebar
-  }),
-};
-
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
   return (
     <>
