@@ -59,6 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
             />
           </div>
 
+
           {/* Content Type */}
           <div className="filter-section">
             <label className="section-title">Content Type</label>
