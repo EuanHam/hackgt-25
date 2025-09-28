@@ -111,9 +111,9 @@ function App() {
     try {
       setLoading(true);
       
-      // Start with hardcoded feed data
-      const hardcodedItems = feedData.feedItems as FeedItem[];
-      let allItems = [...hardcodedItems];
+  // Start with hardcoded feed data (exclude groups, which come from API)
+  const hardcodedItems = (feedData.feedItems as FeedItem[]).filter(item => item.type !== 'group');
+  let allItems: FeedItem[] = [...hardcodedItems];
 
       // Fetch emails if token is available
       if (TOKEN) {
@@ -179,19 +179,24 @@ function App() {
             groupmeItems = groupsData.slice(0, 5).map((group: any) => {
               // Find messages for this group to simulate unread count
               const groupMessages = messagesData.find((msg: any) => msg.group_id === group.id);
-              const unreadCount = groupMessages ? Math.min(groupMessages.message_count || 0, 3) : 0; // Simulate 0-3 unread messages
-              
+              const unreadCount = groupMessages ? Math.min(groupMessages.message_count || 0, 3) : 0;
+              // Determine last message date
+              const lastMsgTs = groupMessages?.messages?.[0]?.timestamp;
+              const lastDate = lastMsgTs
+                ? formatDateOnly(new Date(lastMsgTs * 1000).toISOString())
+                : formatDateOnly(new Date().toISOString());
               return {
                 id: `groupme-group-${group.id}`,
                 type: 'group' as const,
                 groupName: group.name,
                 groupId: group.id,
                 senderName: 'GroupMe',
-                preview: groupMessages ? 
-                  `Latest: ${groupMessages.messages?.[0]?.text?.substring(0, 50) || 'No recent messages'}` : 
+                preview: groupMessages ?
+                  `Latest: ${groupMessages.messages?.[0]?.text?.substring(0, 50) || 'No recent messages'}` :
                   `Group chat with ${group.name}`,
-                timestamp: new Date().toLocaleDateString(),
+                timestamp: lastDate,
                 unreadCount: unreadCount,
+                lastMessageTimestamp: lastMsgTs,
                 groupIconUrl: group.imageURL || '',
               };
             });
@@ -205,7 +210,7 @@ function App() {
               groupId: group.id,
               senderName: 'GroupMe',
               preview: `Group chat with ${group.name}`,
-              timestamp: new Date().toLocaleDateString(),
+              timestamp: formatDateOnly(new Date().toISOString()),
               unreadCount: 2, // Fixed for now
               groupIconUrl: group.imageURL || '',
             }));

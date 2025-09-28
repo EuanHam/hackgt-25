@@ -28,6 +28,7 @@ export interface GroupFeedItem extends BaseFeedItem {
   groupId: string;        // For GroupMe messages
   unreadCount?: number;   // Number of unread messages in the group
   groupIconUrl?: string;  // URL for the group's icon
+  lastMessageTimestamp?: number; // Unix timestamp of the last message in seconds
 }
 
 export type FeedItem = EmailFeedItem | PostFeedItem | GroupFeedItem;
