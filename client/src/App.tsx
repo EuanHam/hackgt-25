@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar'
 import ImageModal from './components/ImageModal'
 import type { FeedItem } from './types/feedTypes'
 import feedData from './data/feedData.json'
+import mockGroupData from './data/group.json'
 import './App.css'
 
 const TOKEN = import.meta.env.VITE_TEMPORARY_TOKEN
@@ -159,72 +160,50 @@ function App() {
         console.log('No token provided, skipping email fetch');
       }
 
-      // Fetch GroupMe groups
-      try {
-        console.log('Testing GroupMe connection...');
-        const groupsResponse = await fetch('http://127.0.0.1:8000/groups');
-        
-        if (groupsResponse.ok) {
-          const groupsData = await groupsResponse.json();
-          console.log('GroupMe groups fetched:', groupsData);
-          
-          // For now, let's try to get recent messages to simulate unread count
-          let groupmeItems: FeedItem[] = [];
-          
-          try {
-            // Fetch recent messages for all groups to simulate unread count
-            const messagesResponse = await fetch('http://127.0.0.1:8000/groups/messages?limit=5');
-            const messagesData = messagesResponse.ok ? await messagesResponse.json() : [];
-            
-            // Transform GroupMe groups to GroupFeedItem format
-            groupmeItems = groupsData.slice(0, 5).map((group: any) => {
-              // Find messages for this group to simulate unread count
-              const groupMessages = messagesData.find((msg: any) => msg.group_id === group.id);
-              const unreadCount = groupMessages ? Math.min(groupMessages.message_count || 0, 3) : 0;
-              // Determine last message date
-              const lastMsgTs = groupMessages?.messages?.[0]?.timestamp;
-              const lastDate = lastMsgTs
-                ? formatDateOnly(new Date(lastMsgTs * 1000).toISOString())
-                : formatDateOnly(new Date().toISOString());
-              return {
-                id: `groupme-group-${group.id}`,
-                type: 'group' as const,
-                groupName: group.name,
-                groupId: group.id,
-                senderName: 'GroupMe',
-                preview: groupMessages ?
-                  `Latest: ${groupMessages.messages?.[0]?.text?.substring(0, 50) || 'No recent messages'}` :
-                  `Group chat with ${group.name}`,
-                timestamp: lastDate,
-                unreadCount: unreadCount,
-                lastMessageTimestamp: lastMsgTs,
-                groupIconUrl: group.imageURL || '',
-              };
-            });
-          } catch (messagesError) {
-            console.error('Error fetching GroupMe messages, using basic group info:', messagesError);
-            // Fallback to basic group info without unread counts
-            groupmeItems = groupsData.slice(0, 5).map((group: any) => ({
-              id: `groupme-group-${group.id}`,
+      // GroupMe data (live or mock)
+      const useApi = import.meta.env.VITE_USE_GROUPME_API === 'true';
+      let groupItems: FeedItem[] = [];
+      if (useApi) {
+        try {
+          const groupsRes = await fetch('http://127.0.0.1:8000/groups');
+          const groups = groupsRes.ok ? await groupsRes.json() : [];
+          const msgsRes = await fetch('http://127.0.0.1:8000/groups/messages?limit=5');
+          const msgs = msgsRes.ok ? await msgsRes.json() : [];
+          groupItems = groups.map((g: any) => {
+            const m = msgs.find((x: any) => x.group_id === g.id);
+            const lastTs = m?.messages?.[0]?.timestamp;
+            return {
+              id: `group-${g.id}`,
               type: 'group' as const,
-              groupName: group.name,
-              groupId: group.id,
-              senderName: 'GroupMe',
-              preview: `Group chat with ${group.name}`,
-              timestamp: formatDateOnly(new Date().toISOString()),
-              unreadCount: 2, // Fixed for now
-              groupIconUrl: group.imageURL || '',
-            }));
-          }
-
-          // Add GroupMe items to the list
-          allItems = [...groupmeItems, ...allItems];
-        } else {
-          console.error('Failed to fetch GroupMe groups');
-        }
-      } catch (groupmeError) {
-        console.error('Error fetching GroupMe data:', groupmeError);
+              groupName: g.name,
+              groupId: g.id,
+              preview: m ? `Latest: ${m.messages[0]?.text?.slice(0,50)}` : `Group chat with ${g.name}`,
+              timestamp: lastTs ? formatDateOnly(new Date(lastTs*1000).toISOString()) : formatDateOnly(new Date().toISOString()),
+              unreadCount: m?.message_count || 0,
+              lastMessageTimestamp: lastTs,
+              groupIconUrl: g.imageURL || ''
+            };
+          });
+        } catch { console.log('Live GroupMe API failed, using mock'); }
       }
+      if (!useApi || groupItems.length === 0) {
+        groupItems = (mockGroupData as any[]).map(g => {
+          const last = g.messages[0];
+          return {
+            id: `mock-${g.group_id}`,
+            type: 'group' as const,
+            groupName: g.group_name,
+            groupId: g.group_id,
+            senderName: 'GroupMe',
+            preview: last?.text ? `Latest: ${last.text.slice(0,50)}` : `Group chat with ${g.group_name}`,
+            timestamp: last ? formatDateOnly(new Date(last.timestamp*1000).toISOString()) : formatDateOnly(new Date().toISOString()),
+            unreadCount: g.message_count,
+            lastMessageTimestamp: last?.timestamp,
+            groupIconUrl: ''
+          };
+        });
+      }
+      allItems = [...groupItems, ...allItems];
 
       // Set the final combined items
       setFeedItems(allItems);
