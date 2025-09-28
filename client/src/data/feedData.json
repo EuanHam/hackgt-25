@@ -5,14 +5,16 @@
       "type": "group",
       "groupName": "HackGT Team",
       "unreadCount": 5,
-      "timestamp": "September 27, 2025"
+      "timestamp": "September 27, 2025",
+      "groupIconUrl": "https://picsum.photos/200/200?random=1"
     },
     {
       "id": "g2",
       "type": "group",
       "groupName": "CS 1332 Study Group",
       "unreadCount": 12,
-      "timestamp": "September 26, 2025"
+      "timestamp": "September 26, 2025",
+      "groupIconUrl": "https://picsum.photos/200/200?random=2"
     },
     {
       "id": "2",
@@ -27,14 +29,16 @@
       "type": "group",
       "groupName": "Roommates 2025",
       "unreadCount": 0,
-      "timestamp": "September 24, 2025"
+      "timestamp": "September 24, 2025",
+      "groupIconUrl": "https://picsum.photos/200/200?random=3"
     },
     {
       "id": "g4",
       "type": "group",
       "groupName": "Gym Buddies",
       "unreadCount": 2,
-      "timestamp": "September 27, 2025"
+      "timestamp": "September 27, 2025",
+      "groupIconUrl": "https://picsum.photos/200/200?random=4"
     },
     {
       "id": "7",
@@ -48,6 +52,7 @@
       "id": "g5",
       "type": "group",
       "groupName": "Book Club",
+      "groupIconUrl": "https://picsum.photos/200/200?random=5",
       "unreadCount": 0,
       "timestamp": "September 20, 2025"
     },
