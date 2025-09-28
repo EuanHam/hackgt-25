@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       )}
       
       {/* Sidebar */}
-  <div className={`sidebar ${isOpen ? 'sidebar-open' : ''}`} style={{ top: headerHeight }}>
+  <div className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-header">
           <h3>Filters</h3>
           <button className="sidebar-close" onClick={onClose}>
