@@ -2,19 +2,54 @@ import React from 'react';
 import './Sidebar.css';
 import Select from "react-select";
 
+interface Group {
+  id: string;
+  name: string;
+  imageURL: string;
+}
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   headerHeight: number;
+  groups: Group[]; // Add groups prop
 }
 
-const accountOptions = [
-  { value: "@universitylife", label: "@universitylife" },
-  { value: "@cs_department", label: "@cs_department" },
-  { value: "@sports_club", label: "@sports_club" },
-];
+// Remove the hardcoded accountOptions
+// const accountOptions = [ ... ];
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
+const customStyles = {
+  control: (provided: any) => ({
+    ...provided,
+    borderRadius: "6px",
+    borderColor: "#ccc",
+    minHeight: "38px",
+    boxShadow: "none",
+    "&:hover": { borderColor: "#888" },
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    zIndex: 9999,
+  }),
+};
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight, groups }) => {
+  
+  // Dynamically generate account options from groups prop
+  const accountOptions = groups.map(group => ({
+    value: group.id,
+    label: group.name,
+    // Optional: include additional data if needed
+    groupData: group
+  }));
+
+  // Handle selection change
+  const handleAccountChange = (selectedOptions: any) => {
+    console.log('Selected groups:', selectedOptions);
+    // You can pass this up to App.tsx via a callback prop if needed
+    // onGroupsChange(selectedOptions);
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -33,17 +68,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
         
         <div className="sidebar-content">
           {/* GroupMe accounts */}
-          <h4>GroupMe accounts</h4>
+          <h4>GroupMe Accounts ({groups.length})</h4>
           <div style={{ marginBottom: "1rem" }}>
             <Select
               options={accountOptions}
               isMulti
-              placeholder="Select accounts..."
+              placeholder="Select groups..."
               classNamePrefix="react-select"
               closeMenuOnSelect={false}
+              onChange={handleAccountChange}
+              styles={customStyles}
             />
           </div>
-
 
           {/* Content Type */}
           <div className="filter-section">
@@ -54,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
             </label>
             <label className="filter-option">
               <input type="checkbox" defaultChecked />
-              <span>Posts</span>
+              <span>GroupMe Messages</span> {/* Updated label */}
             </label>
           </div>
           
@@ -95,8 +131,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
               <span>By Type</span>
             </label>
           </div>
-          </div>
         </div>
+      </div>
     </>
   );
 };
