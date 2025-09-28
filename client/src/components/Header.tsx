@@ -1,5 +1,6 @@
 import React from 'react';
 import './Header.css';
+import logo from '../../public/logo.png';
 
 interface HeaderProps {
   onHamburgerClick: () => void;
@@ -24,9 +25,7 @@ const Header = React.forwardRef<HTMLElement, HeaderProps>(
       <header className = "header" ref={ref}>
         <div className="header-content">
           {/* App Name on the left */}
-          <div className="app-name">
-            <h1>App Name</h1>
-          </div>
+            <img src={logo} alt="alternatetext" width={115} height={60} />
           {/* Search bar in the center */}
           <div className="search-container">
             <input 
