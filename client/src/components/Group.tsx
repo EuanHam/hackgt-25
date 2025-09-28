@@ -60,21 +60,45 @@ const Group: React.FC<GroupProps> = ({
               </button>
             </div>
             <div className="group-modal-body">
-              <div className="chat-message">
-                <div className="chat-sender">Jane</div>
-                <div className="chat-text">Hey, are we meeting later?</div>
-                <div className="chat-timestamp">9:45 AM</div>
-              </div>
-              <div className="chat-message">
-                <div className="chat-sender">Alex</div>
-                <div className="chat-text">Yep, see you at the library 📚</div>
-                <div className="chat-timestamp">9:47 AM</div>
-              </div>
-              <div className="chat-message">
-                <div className="chat-sender">You</div>
-                <div className="chat-text">Perfect, I’ll bring snacks 😋</div>
-                <div className="chat-timestamp">9:49 AM</div>
-              </div>
+              {/* Hardcoded messages from group.json */}
+              {groupName === "Free Food @ Tech (READ DESCRIPTION)" && (
+                <>
+                  <div className="chat-message">
+                    <div className="chat-sender">GroupMe</div>
+                    <div className="chat-text">Ranya Khan edited to: "Some leftover free food (halal) from Marrakech express right outside kirkwood room exhibition hall"</div>
+                    <div className="chat-timestamp">{new Date(1759021532 * 1000).toLocaleTimeString()}</div>
+                  </div>
+                  <div className="chat-message">
+                    <div className="chat-sender">Ranya Khan</div>
+                    <div className="chat-text">Some leftover free food (halal) from Marrakech express right outside kirkwood room exhibition hall</div>
+                    <div className="chat-timestamp">{new Date(1759021107 * 1000).toLocaleTimeString()}</div>
+                  </div>
+                  <div className="chat-message">
+                    <div className="chat-sender">Ryder Johnson</div>
+                    <div className="chat-text">Free Food at COC lobby right now</div>
+                    <div className="chat-timestamp">{new Date(1759019982 * 1000).toLocaleTimeString()}</div>
+                  </div>
+                </>
+              )}
+              {groupName === "Hackgt25" && (
+                <>
+                  <div className="chat-message">
+                    <div className="chat-sender">GroupMe</div>
+                    <div className="chat-text">Euan Ham changed the group's avatar</div>
+                    <div className="chat-timestamp">{new Date(1759011054 * 1000).toLocaleTimeString()}</div>
+                  </div>
+                  <div className="chat-message">
+                    <div className="chat-sender">Annabelle Lee</div>
+                    <div className="chat-text">Don’t read this message either</div>
+                    <div className="chat-timestamp">{new Date(1758992672 * 1000).toLocaleTimeString()}</div>
+                  </div>
+                  <div className="chat-message">
+                    <div className="chat-sender">Euan Ham</div>
+                    <div className="chat-text">Don’t read this message</div>
+                    <div className="chat-timestamp">{new Date(1758992564 * 1000).toLocaleTimeString()}</div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </>
