@@ -133,14 +133,14 @@ function App() {
             
             // Transform API response to FeedItem format
             const transformedEmails: FeedItem[] = emailsData.emails?.map((email: any, index: number) => {
-              const fromInfo = parseFromField(email.from || email.sender || '');
+              const fromInfo = parseFromField(email.From || email.sender || '');
               return {
                 id: email.id || `api-email-${index}`,
                 type: 'email' as const,
                 sender: fromInfo.name,
                 senderEmail: fromInfo.email,
-                subject: email.subject || 'No Subject',
-                preview: truncatePreview(email.body || email.snippet || 'No preview available'),
+                subject: email.Subject || 'No Subject',
+                preview: truncatePreview(email.Body || email.snippet || 'No preview available'),
                 timestamp: formatDateOnly(email.date || new Date().toISOString()),
                 isRead: email.isRead || false
               };

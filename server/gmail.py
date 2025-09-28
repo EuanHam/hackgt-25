@@ -80,15 +80,15 @@ def get_email_body(payload):
 
 def get_gmail_emails(access_token: str, max_results: int = 10, start_date: str = None, end_date: str = None):
     """
-    Fetch Gmail emails in a given date range (if provided).
+    Fetch Gmail unread emails in a given date range (if provided).
     Dates should be strings in 'YYYY-MM-DD' format.
     """
     try:
         creds = Credentials(token=access_token, scopes=SCOPES)
         service = build("gmail", "v1", credentials=creds)
 
-        # Build Gmail search query
-        query = ""
+        # Build Gmail search query for unread emails
+        query = "is:unread"
         if start_date:
             start_timestamp = int(datetime.strptime(start_date, "%Y-%m-%d").timestamp())
             query += f" after:{start_timestamp}"
@@ -99,7 +99,7 @@ def get_gmail_emails(access_token: str, max_results: int = 10, start_date: str =
         results = service.users().messages().list(
             userId="me",
             maxResults=max_results,
-            q=query.strip()
+            q=query
         ).execute()
 
         messages = results.get("messages", [])
