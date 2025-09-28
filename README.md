@@ -2,7 +2,8 @@
 
 A full-stack web application built with React, TypeScript, Vite (Frontend) & FastAPI, Python (backend) with OpenAI feature.
 
-### Project Contributers: Eileen Chen, Tiberius Colina, Euan Ham, Annabelle Lee
+### Project Contributers 
+🧋 Eileen Chen 🧋 Tiberius Colina 🧋 Euan Ham 🧋 Annabelle Lee 🧋
 
 ## 📁 Project Structure
 
