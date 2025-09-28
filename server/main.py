@@ -2,6 +2,7 @@ from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from gmail import get_gmail_emails
 import groupme
+from dotenv import load_dotenv
 
 app = FastAPI()
 
@@ -39,8 +40,12 @@ def get_emails(
     token = authorization.split(" ")[1]
 
     try:
-        emails = get_gmail_emails(token, max_results=max_results, start_date=start_date, end_date=end_date)
-        return {"emails": emails}
+        emails, filtered_out = get_gmail_emails(token, max_results=max_results, start_date=start_date, end_date=end_date)
+
+        return {
+            "emails": emails,
+            "filtered_out": filtered_out
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
