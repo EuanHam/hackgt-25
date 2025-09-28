@@ -37,7 +37,7 @@
   display: block;
   object-fit: contain;
   border-radius: 12px;
-  margin-left: -4.5rem;
+  margin-left: 0; /* reset negative margin to align logo correctly */
 }
 
 .app-name h1 {
