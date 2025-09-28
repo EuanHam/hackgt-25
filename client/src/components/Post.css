@@ -203,3 +203,81 @@
     line-clamp: 2;
   }
 }
+
+/* Backdrop */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 1000;
+}
+
+/* Modal container */
+.post-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  max-width: 650px;   /* bigger modal */
+  width: 95%;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: rgba(46,46,46,0.7);
+  z-index: 1002;
+}
+
+/* Content stacked vertically */
+.post-modal-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Image container */
+.post-modal-image {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.post-modal-image img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;   /* prevent cropping */
+  max-height: 500px;     /* keeps modal balanced */
+}
+
+/* Caption/details section */
+.post-modal-details {
+  background: #fff;       /* white backdrop */
+  padding: 16px;
+  border-top: 1px solid #eee;
+}
+.post-modal-header {
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  color: #333;
+}
+.post-modal-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #444;
+}
+
