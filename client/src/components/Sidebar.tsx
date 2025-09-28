@@ -1,11 +1,33 @@
 import React from 'react';
 import './Sidebar.css';
+import Select from "react-select";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   headerHeight: number;
 }
+
+const accountOptions = [
+  { value: "@universitylife", label: "@universitylife" },
+  { value: "@cs_department", label: "@cs_department" },
+  { value: "@sports_club", label: "@sports_club" },
+];
+
+const customStyles = {
+  control: (provided: any) => ({
+    ...provided,
+    borderRadius: "6px",
+    borderColor: "#ccc",
+    minHeight: "38px",
+    boxShadow: "none",
+    "&:hover": { borderColor: "#888" },
+  }),
+  menu: (provided: any) => ({
+    ...provided,
+    zIndex: 9999, // makes sure it pops over the sidebar
+  }),
+};
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
   return (
@@ -27,26 +49,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, headerHeight }) => {
         <div className="sidebar-content">
           {/* GroupMe accounts */}
           <h4>GroupMe accounts</h4>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-            <input type="text" placeholder="e.g. universitylife" className="filter-input" />
-            <button className="add-btn">+</button>
-          </div>
-          <div>
-            <span className="chip">@universitylife</span>
-            <span className="chip">@cs_department</span>
+          <div style={{ marginBottom: "1rem" }}>
+            <Select
+              options={accountOptions}
+              isMulti
+              placeholder="Select accounts..."
+              classNamePrefix="react-select"
+              closeMenuOnSelect={false}
+            />
           </div>
 
-          {/* Outlook keywords */}
-          <h4>Outlook keywords</h4>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-            <input type="text" placeholder="e.g. assignment, deadline" className="filter-input" />
-            <button className="add-btn">+</button>
-          </div>
-          <div>
-            <span className="chip">assignment</span>
-            <span className="chip">deadline</span>
-            <span className="chip">enrollment</span>
-          </div>
 
           {/* Content Type */}
           <div className="filter-section">
