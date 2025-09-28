@@ -15,6 +15,7 @@ function App() {
   const [headerHeight, setHeaderHeight] = useState(0)
   const SIDEBAR_WIDTH = 340;
   const [feedItems, setFeedItems] = useState<FeedItem[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [imageModalState, setImageModalState] = useState({
     isOpen: false,
@@ -240,11 +241,44 @@ function App() {
   fetchData();
 }, [])
 
-  
+  // Filter feed items by search query (case-insensitive)
+  const filterFeedItems = (items: FeedItem[], query: string): FeedItem[] => {
+    if (!query || query.trim().length === 0) return items;
+    const q = query.trim().toLowerCase();
+
+    return items.filter(item => {
+      if (item.type === 'email') {
+        const e = item as any;
+        return (
+          (e.sender && e.sender.toLowerCase().includes(q)) ||
+          (e.subject && e.subject.toLowerCase().includes(q)) ||
+          (e.preview && e.preview.toLowerCase().includes(q))
+        );
+      }
+
+      if (item.type === 'post') {
+        const p = item as any;
+        return (
+          (p.posterName && p.posterName.toLowerCase().includes(q)) ||
+          (p.description && p.description.toLowerCase().includes(q))
+        );
+      }
+
+      if (item.type === 'group') {
+        const g = item as any;
+        return (
+          (g.groupName && g.groupName.toLowerCase().includes(q)) ||
+          (g.preview && g.preview.toLowerCase().includes(q))
+        );
+      }
+
+      return false;
+    });
+  }
 
   return (
     <div className="app">
-    <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} />
+    <Header ref={headerRef} onHamburgerClick={handleHamburgerClick} onSearch={setSearchQuery} />
     <div
       className="main-wrapper"
       style={{
@@ -260,7 +294,7 @@ function App() {
           </div>
         ) : (
           <Feed 
-            feedItems={feedItems} 
+            feedItems={filterFeedItems(feedItems, searchQuery)} 
             onImageClick={handleImageClick} 
           />
         )}
